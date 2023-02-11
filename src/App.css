@@ -1,38 +1,112 @@
-.App {
-  text-align: center;
+@import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
+
+
+:root {
+  --logoFont: 'Cookie', cursive;
+  --uiGray: #94a3b8;
+  --bgColor: #f8fafc;
+  --signBlue: #0ea5e9;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+html {
+  width: 100%;
+  height: 100%;
+  background-color: var(--bgColor);
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+
+.phoneScreenImg {
+  visibility: hidden;
+}
+
+.homePage {
+  
+  display: flex;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+}
+
+.hRight, .hRightDiv {
+  display:flex;
+  flex-direction: column;
+}
+
+.hRight {
+  gap: 10px;
+  
+}
+
+.centerT {
+  display: flex;
+  justify-content: center;
+}
+
+.boldT {
+  color: var(--signBlue);
+  font-weight: bold;
+}
+
+.signUpDiv {
+  gap:5px;
+}
+
+.hLeft {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.hRightDiv {
   display: flex;
   flex-direction: column;
-  align-items: center;
+  padding: 30px;
+  gap: 10px;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+  background-color: white;
+}
+
+.instaTitle {
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  display: flex;
+  font-family: var(--logoFont);
+  font-size: 40px;
+
 }
 
-.App-link {
-  color: #61dafb;
+.homeLoginForm {
+  display:flex;
+  flex-direction: column;
+  gap:10px;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.homeLoginForm > input {
+  width: 260px;
+  height: 30px;
+  background-color: #f8fafc;
+  border-radius: 5px;
+  padding: 6px;
+}
+
+.orDiv, .orDiv > div {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  
+}
+
+.orDiv > :nth-child(2) {
+  color: var(--uiGray);
+}
+
+.orLeft, .orRight {
+  border-top: 2px solid gray;
+  margin-top: 7px;
 }
