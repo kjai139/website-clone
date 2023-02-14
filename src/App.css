@@ -1,11 +1,19 @@
 @import url('https://fonts.googleapis.com/css2?family=Cookie&display=swap');
 
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,500;0,600;1,400;1,700&display=swap');
+
 
 :root {
   --logoFont: 'Cookie', cursive;
   --uiGray: #94a3b8;
   --bgColor: #f8fafc;
   --signBlue: #0ea5e9;
+  --borderColor: #cbd5e1;
+  --placeHolderTxt: #9ca3af;
+  --focusGray: #64748b;
+  --textFont: 'Open Sans', sans-serif;
+  --btnBlue: #60a5fa;
+  --googleGreen: #34d399;
 }
 
 * {
@@ -49,6 +57,43 @@ html {
   justify-content: center;
 }
 
+.hidden {
+  visibility: hidden;
+}
+
+.googleBtn {
+  border: none;
+  display:flex;
+  align-items: center;
+  background-color: inherit;
+  gap:5px;
+  font-size: 18px;
+  color:var(--googleGreen);
+  font-weight: bold;
+}
+
+.fPwDiv{
+  font-size: 12px;
+  padding-top: 10px;
+}
+
+.getAppTxt{
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.googleBtn:hover, .logInBtn:hover{
+  cursor: pointer;
+}
+
+.googleLogo {
+  height: 24px;
+  width: 24px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-color: inherit;
+}
+
 .boldT {
   color: var(--signBlue);
   font-weight: bold;
@@ -67,18 +112,28 @@ html {
 .hRightDiv {
   display: flex;
   flex-direction: column;
-  padding: 30px;
+  padding: 20px 50px 20px 50px;
   gap: 10px;
-  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   background-color: white;
 }
+
+.hRightDiv, .formInput {
+  border: 2px solid var(--borderColor);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--focusGray);
+}
+
+
 
 .instaTitle {
   justify-content: center;
   display: flex;
   font-family: var(--logoFont);
-  font-size: 40px;
-
+  font-size: 60px;
+  margin: 30px 0px 30px 0px;
 }
 
 .homeLoginForm {
@@ -87,18 +142,73 @@ html {
   gap:10px;
 }
 
-.homeLoginForm > input {
+.formInput {
   width: 260px;
   height: 30px;
   background-color: #f8fafc;
   border-radius: 5px;
   padding: 6px;
+  font-family: var(--textFont);
+    
 }
+
+label {
+  position: relative;
+}
+
+.placeHolderTxt {
+  position: absolute;
+  color: var(--placeHolderTxt);
+  left:0;
+  top:0;
+  font-size: 12px;
+  padding: 10px;
+}
+
+.logInBtn {
+  background-color: var(--btnBlue);
+  border: 0;
+  border-radius: 8px;
+  padding: 10px;
+  font-weight: bold;
+  font-family: var(--placeHolderTxt);
+  color: white;
+}
+
+.pwToggleBtn {
+  font-size: 12px;
+  font-family: var(--textFont);
+  font-weight: bold;
+  position: absolute;
+  top:0;
+  right:0;
+  margin: 8px 10px 5px 10px;
+  visibility: hidden;
+  border: none;
+  background-color: inherit;
+  padding: 0;
+}
+
+input:focus + .placeHolderTxt,input:not(:placeholder-shown) + .placeHolderTxt  {
+
+  font-size: 8px;
+  padding-top: 5px;
+}
+
+input:focus, input:not(:placeholder-shown){
+  padding-top: 15px;
+}
+
+input:focus, input:not(:placeholder-shown) ~ .pwToggleBtn {
+  visibility: visible;
+}
+
 
 .orDiv, .orDiv > div {
   display: flex;
   flex: 1;
   justify-content: center;
+  margin-bottom: 10px;
   
 }
 
@@ -109,4 +219,17 @@ html {
 .orLeft, .orRight {
   border-top: 2px solid gray;
   margin-top: 7px;
+}
+
+.dlLogo {
+  width: 136px;
+  height: 40px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  border: none;
+}
+
+.downloadLogo {
+  display: flex;
+  justify-content: space-evenly;
 }
