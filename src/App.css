@@ -203,6 +203,10 @@ input:focus, input:not(:placeholder-shown) ~ .pwToggleBtn {
   visibility: visible;
 }
 
+label:hover {
+  cursor: text;
+}
+
 
 .orDiv, .orDiv > div {
   display: flex;

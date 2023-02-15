@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import homePhoneScreen from "./Assets/images/home-phones.png"
 import phone1 from "./Assets/images/phone1.png"
 import phone2 from "./Assets/images/phone2.png"
 import appleBtn from "./Assets/images/apple-logo.png"
 import googleBtn from "./Assets/images/google-logo.png"
 import googleLogo from "./Assets/images/google-icon.png" 
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth"
+import { firebaseAuth } from "../firebase"
+import { useNavigate } from "react-router-dom"
 
 const Homepage = () => {
 
@@ -22,6 +25,33 @@ const Homepage = () => {
         }
     }
 
+    //firebase
+    const navigate = useNavigate()
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
+
+
+    const signIn = async () => {
+        let provider = new GoogleAuthProvider()
+        await signInWithPopup(firebaseAuth, provider)
+    }
+
+    firebaseAuth.onAuthStateChanged((user) => {
+        if (user) {
+            console.log('signed in')
+            console.log(getAuth().currentUser)
+            setIsUserLoggedIn(true)
+        } else {
+
+        }
+    })
+
+    useEffect ( () => {
+        if (isUserLoggedIn === true) {
+            navigate('/dashboard')
+        }
+    }, [isUserLoggedIn])
+
+
     return (
         <div className="homePage">
             <div className="hLeft" style={{
@@ -38,7 +68,7 @@ const Homepage = () => {
                     <div className="instaTitle">
                         Instagram
                     </div>
-                    <form className="homeLoginForm">
+                    <form className="homeLoginForm" autoComplete="off">
                         <label>
                         <input type="text" name="userName" placeholder=" " className="formInput"></input>
                         <span className="placeHolderTxt">Phone number, username or email address</span>
@@ -65,7 +95,7 @@ const Homepage = () => {
                         <div className="orRight"></div>
                     </div>
                     <div className="centerT">
-                        <button className="googleBtn"><div className="googleLogo" style={{
+                        <button className="googleBtn" onClick={signIn}><div className="googleLogo" style={{
                             backgroundImage: `url(${googleLogo})`
                         }}></div><div>Log in with Google</div></button>
                     </div>
