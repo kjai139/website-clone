@@ -28,6 +28,18 @@ html {
   background-color: var(--bgColor);
 }
 
+body {
+  display:flex;
+  height: 100%;
+  width: 100%;
+}
+
+
+.App, #root {
+ 
+  display: flex;
+  flex: 1;
+}
 
 .phoneScreenImg {
   visibility: hidden;
@@ -136,6 +148,8 @@ input:focus {
   margin: 30px 0px 30px 0px;
 }
 
+
+
 .homeLoginForm {
   display:flex;
   flex-direction: column;
@@ -236,4 +250,63 @@ label:hover {
 .downloadLogo {
   display: flex;
   justify-content: space-evenly;
+}
+
+
+.dashboardDiv{
+  display:flex;
+  flex: 1;
+}
+
+.dashboardLeft {
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  justify-content: space-between;
+  padding: 20px;
+  border-right: 1px solid var(--borderColor);
+}
+
+.dashboardRight {
+  flex: 6;
+  display: flex;
+}
+
+.dashLogo {
+  font-size: 34px;
+  font-family: var(--logoFont);
+  padding-bottom: 10px;
+}
+
+.dashList {
+  display: flex;
+  flex-direction: column;
+  
+  list-style-type: none;
+  gap: 10px;
+}
+
+.dashMenuBtn {
+  
+}
+
+.dashBtns{
+  display:flex;
+  align-items: center;
+  border: 0;
+  background: inherit;
+  cursor: pointer;
+  gap:10px;
+  font-size: 16px;
+  font-family: var(--textFont);
+  
+}
+
+
+.dashBtnImg {
+  width: 24px;
+  height:24px;
+  background-position: center;
+  background-size: contain;
+  
 }

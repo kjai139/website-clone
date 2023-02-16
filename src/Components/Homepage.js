@@ -41,7 +41,7 @@ const Homepage = () => {
             console.log(getAuth().currentUser)
             setIsUserLoggedIn(true)
         } else {
-
+            setIsUserLoggedIn(false)
         }
     })
 
