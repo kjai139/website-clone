@@ -15,6 +15,7 @@ const Homepage = () => {
 
     const [isPwDisplayed, setIsPwDisplayed] = useState('password')
 
+    
 
     const togglePwDisplay = (e) => {
         e.preventDefault()
@@ -28,7 +29,7 @@ const Homepage = () => {
     //firebase
     const navigate = useNavigate()
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false)
-
+    const [userProfPic, setUserProfPic] = useState()
 
     const signIn = async () => {
         let provider = new GoogleAuthProvider()
@@ -38,8 +39,9 @@ const Homepage = () => {
     firebaseAuth.onAuthStateChanged((user) => {
         if (user) {
             console.log('signed in')
-            console.log(getAuth().currentUser)
+            setUserProfPic(firebaseAuth.currentUser.photoURL)
             setIsUserLoggedIn(true)
+            
         } else {
             setIsUserLoggedIn(false)
         }
@@ -47,7 +49,10 @@ const Homepage = () => {
 
     useEffect ( () => {
         if (isUserLoggedIn === true) {
-            navigate('/dashboard')
+            
+            navigate('/dashboard', { state: {
+                profUrl: userProfPic
+            }})
         }
     }, [isUserLoggedIn])
 
