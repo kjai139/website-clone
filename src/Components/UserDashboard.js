@@ -20,6 +20,7 @@ const UserDashboard = () => {
     const getUserName = () => {
         console.log(getAuth().currentUser)
         console.log(getAuth().currentUser.displayName)
+        return getAuth().currentUser.displayName
     }
 
     const [profilePic, setProfilePic] = useState(defaultProfIcon)
@@ -76,6 +77,8 @@ const UserDashboard = () => {
         console.log(v.btnTitle)
         if (v.btnTitle == 'Create'){
             setIsCreateOn(true)
+            setIsOverlayOn(true)
+            setUploadedImg(dragIcon)
         } 
     }
 
@@ -118,17 +121,19 @@ const UserDashboard = () => {
 
 
     const renderCreate = () => {
+        
         return (
             <div className="createFormDiv">
+                <div className="createHeader">Create new post</div>
                 <form id="img-form">
                     <div className="formCont">
                     <div className="uploadImg" style={{
-                        backgroundImage:`url(${dragIcon})`
+                        backgroundImage:`url(${uploadedImg})`
                     }}>
 
                     </div>
                     <label className="file-upload">
-                    <input type="file" name="fileName">
+                    <input type="file" accept="image/png, image/gif, image/jpeg" name="fileName" onChange={onMediaFileSelect}>
                     </input>
                     Select from computer
                     </label>
@@ -140,10 +145,63 @@ const UserDashboard = () => {
         )
     }
 
+    const renderCreateShare = () => {
+        return (
+            <div className="createFormDiv">
+                <div className="createHeader"> Create new Post
+
+                </div>
+                <div className="createBox">
+                    <div className="createBoxLeft" style={{
+                        backgroundImage:`url(${uploadedImg})`
+                    }}>
+
+                    </div>
+                    <div className="createBoxRight">
+                        <div className="boxRightProfileDiv">
+                            <div className="boxProfIcon" style={{
+                                backgroundImage:`url(${profUrl})`
+                            }}>
+
+                            </div>
+                            <div className="boxProfName">
+                                {getUserName()}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    const closeOverlay = () => {
+        setIsCreateOn(false)
+        setIsOverlayOn(false)
+        setIsImgUploaded(false)
+    }
+
+    const [uploadedImg, setUploadedImg] = useState(dragIcon)
+    const [isImgUploaded, setIsImgUploaded] = useState(false)
+
+
+    const onMediaFileSelect = (e) => {
+        e.preventDefault()
+        let file = e.target.files[0]
+        let reader = new FileReader()
+        let fileUrl = reader.readAsDataURL(file)
+        console.log(fileUrl, [reader.result])
+        reader.onloadend = () => {
+            setUploadedImg([reader.result])
+            setIsImgUploaded(true)
+        }
+        
+    }
+
     return (
         <div className="dashboardDiv">
-            {isCreateOn ? renderCreate() : null}
-        <div className={`overlay ${isOverlayOn ? undefined : 'hidden'}`}></div>
+            {isCreateOn && isImgUploaded === false ? renderCreate() : null}
+            {isImgUploaded ? renderCreateShare() : null}
+        <div className={`overlay ${isOverlayOn ? undefined : 'hidden'}`} onClick={closeOverlay}></div>
            <div className="dashboardLeft">
                 
                 <ul className="dashList">

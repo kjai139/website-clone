@@ -72,6 +72,56 @@ body {
   transform: translate(-50%, -50%);
   left: 50%;
   top: 50%;
+
+  z-index: 9999;
+  background-color: white;
+  
+  border-radius: 8px;
+}
+
+.createHeader {
+  justify-content: center;
+  display: flex;
+  padding-top: 10px;
+  border-bottom: 1px solid var(--uiGray);
+  padding-bottom: 10px;
+  
+  
+}
+
+.createBox {
+  padding: 200px;
+  display: flex;
+}
+
+.createBoxLeft {
+  width: 300px;
+  height: 300px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.createBoxRight {
+  display: flex;
+  flex-direction: column;
+}
+
+.boxRightProfileDiv {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
+  width: 200px;
+}
+
+
+.boxProfIcon {
+  width: 25px;
+  height: 25px;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 
@@ -80,12 +130,13 @@ input[type=file] {
 }
 
 .file-upload {
-  padding: 10px;
+  padding: 10px 15px 10px 15px;
   border: 0;
   border-radius: 6px;
   background-color: var(--signBlue);
   color: white;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .file-upload:hover {
@@ -171,6 +222,10 @@ input[type=file] {
   border: 2px solid var(--borderColor);
 }
 
+#img-form {
+  padding: 200px;
+}
+
 .uploadImg {
 
   width: 60px;
@@ -179,10 +234,10 @@ input[type=file] {
   background-position: center center;
   margin: 50px;
   background-size: contain;
-  z-index: 9999;
-  background-color: white
+  
 
 }
+
 
 input:focus {
   outline: none;
