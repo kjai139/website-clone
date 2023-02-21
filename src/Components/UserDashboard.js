@@ -12,7 +12,8 @@ import dragIcon from "./Assets/images/drag-icon.svg"
 
 import { Link, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { firebaseAuth } from "../firebase"
+import { fireStore, firebaseAuth } from "../firebase"
+import { Firestore, addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore"
 
 
 const UserDashboard = () => {
@@ -74,8 +75,8 @@ const UserDashboard = () => {
     ]
 
     const btnFunction = (v) => {
-        console.log(v.btnTitle)
-        if (v.btnTitle == 'Create'){
+        
+        if (v.btnTitle === 'Create'){
             setIsCreateOn(true)
             setIsOverlayOn(true)
             setUploadedImg(dragIcon)
@@ -145,12 +146,41 @@ const UserDashboard = () => {
         )
     }
 
+    const [txtAreaCont, setTxtAreaCont] = useState()
+    const [txtAreaWC, setTxtAreaWC] = useState(0)
+
+    const handleTxtChange = (e) => {
+        setTxtAreaCont(e.target.value)
+        setTxtAreaWC(e.target.value.length)
+    }
+
+    const createNewPost = async () => {
+        try {
+            const postRef = await addDoc(collection(fireStore, "blogPosts"), {
+                name:getUserName(),
+                imageUrl: '',
+                profilePicUrl: profUrl,
+                timeStamp: serverTimestamp()
+    
+            })
+
+
+            //upload
+
+            const filePath = `${getAuth().currentUser.uid}/${postRef.id}/${uploadedFileName}`
+        } catch(error) {
+            console.error('Error writing to serv', error)
+        }
+        
+    }
+
     const renderCreateShare = () => {
         return (
             <div className="createFormDiv">
                 <div className="createHeader"> Create new Post
 
                 </div>
+                <button className="shareBtn">Share</button>
                 <div className="createBox">
                     <div className="createBoxLeft" style={{
                         backgroundImage:`url(${uploadedImg})`
@@ -167,6 +197,13 @@ const UserDashboard = () => {
                             <div className="boxProfName">
                                 {getUserName()}
                             </div>
+                            
+                        </div>
+                        <div className="txtAreaDiv">
+                            <textarea className="captionTxtArea" placeholder="Write a caption..." maxLength="2200" rows="6" onChange={handleTxtChange}></textarea>
+                        </div>
+                        <div className="WcDiv">
+                            <div className="wordCounter">{txtAreaWC}/2200</div>
                         </div>
                     </div>
                 </div>
@@ -178,21 +215,24 @@ const UserDashboard = () => {
         setIsCreateOn(false)
         setIsOverlayOn(false)
         setIsImgUploaded(false)
+        setTxtAreaWC(0)
     }
 
     const [uploadedImg, setUploadedImg] = useState(dragIcon)
     const [isImgUploaded, setIsImgUploaded] = useState(false)
-
+    const [uploadedFileName, setupLoadedFileName] = useState()
 
     const onMediaFileSelect = (e) => {
         e.preventDefault()
         let file = e.target.files[0]
         let reader = new FileReader()
         let fileUrl = reader.readAsDataURL(file)
-        console.log(fileUrl, [reader.result])
+        // console.log(fileUrl, [reader.result])
         reader.onloadend = () => {
             setUploadedImg([reader.result])
             setIsImgUploaded(true)
+            setupLoadedFileName(file.name)
+            console.log(file.name)
         }
         
     }
