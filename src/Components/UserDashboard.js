@@ -9,12 +9,16 @@ import createIcon from "./Assets/images/dashboard-icons/create-icon.svg"
 import burgerIcon from "./Assets/images/dashboard-icons/menu-burger.svg"
 import defaultProfIcon from "./Assets/images/dashboard-icons/default-prof.png"
 import dragIcon from "./Assets/images/drag-icon.svg"
+import spinGif from "./Assets/images/gifs/spin.gif"
+import checkGif from "./Assets/images/gifs/check-mark.gif"
+
+
 
 import { Link, useLocation } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { fireStore, firebaseAuth } from "../firebase"
-import { Firestore, addDoc, collection, doc, serverTimestamp, setDoc } from "firebase/firestore"
-
+import { fireStore, firebaseAuth, storage } from "../firebase"
+import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
 
 const UserDashboard = () => {
 
@@ -25,6 +29,7 @@ const UserDashboard = () => {
     }
 
     const [profilePic, setProfilePic] = useState(defaultProfIcon)
+    
 
 
 
@@ -149,6 +154,8 @@ const UserDashboard = () => {
     const [txtAreaCont, setTxtAreaCont] = useState()
     const [txtAreaWC, setTxtAreaWC] = useState(0)
 
+    const [loadingStatus, setloadingStatus] = useState(spinGif)
+
     const handleTxtChange = (e) => {
         setTxtAreaCont(e.target.value)
         setTxtAreaWC(e.target.value.length)
@@ -158,9 +165,11 @@ const UserDashboard = () => {
         try {
             const postRef = await addDoc(collection(fireStore, "blogPosts"), {
                 name:getUserName(),
-                imageUrl: '',
+                imageUrl: spinGif,
                 profilePicUrl: profUrl,
-                timeStamp: serverTimestamp()
+                timeStamp: serverTimestamp(),
+                caption: txtAreaCont,
+                comments:[]
     
             })
 
@@ -168,6 +177,38 @@ const UserDashboard = () => {
             //upload
 
             const filePath = `${getAuth().currentUser.uid}/${postRef.id}/${uploadedFileName}`
+
+            const newImgRef = ref(storage, filePath)
+            const uploadTask = uploadBytesResumable(newImgRef, imgfile)
+            uploadTask.on('state_changed', (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                console.log('Upload:' + progress + '% done');
+
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('upload paused')
+                        break;
+                    case 'running':
+                        console.log('running upload')
+                        break;
+                    default:
+                        console.log('doin nothing')
+                }
+            }, (error) => {
+                console.log('error uploading', error)
+            }, async () => {
+                let publicImgUrl = await getDownloadURL(uploadTask.snapshot.ref)
+
+                //update
+
+                await updateDoc(postRef, {
+                    imageUrl: publicImgUrl,
+                    
+                })
+
+            })
+
+
         } catch(error) {
             console.error('Error writing to serv', error)
         }
@@ -180,7 +221,7 @@ const UserDashboard = () => {
                 <div className="createHeader"> Create new Post
 
                 </div>
-                <button className="shareBtn">Share</button>
+                <button className="shareBtn" onClick={createNewPost}>Share</button>
                 <div className="createBox">
                     <div className="createBoxLeft" style={{
                         backgroundImage:`url(${uploadedImg})`
@@ -216,11 +257,16 @@ const UserDashboard = () => {
         setIsOverlayOn(false)
         setIsImgUploaded(false)
         setTxtAreaWC(0)
+        loadPosts()
     }
 
     const [uploadedImg, setUploadedImg] = useState(dragIcon)
     const [isImgUploaded, setIsImgUploaded] = useState(false)
     const [uploadedFileName, setupLoadedFileName] = useState()
+    const [imgfile, setImgFile] = useState() 
+    
+
+
 
     const onMediaFileSelect = (e) => {
         e.preventDefault()
@@ -231,10 +277,41 @@ const UserDashboard = () => {
         reader.onloadend = () => {
             setUploadedImg([reader.result])
             setIsImgUploaded(true)
+            setImgFile(file)
             setupLoadedFileName(file.name)
-            console.log(file.name)
+            console.log(file, [reader.result])
         }
         
+    }
+
+    const [userData, setUserData] = useState([])
+
+    const loadPosts = async () => {
+        setUserData([])
+        const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
+
+        const querySnap = await getDocs(recentPostQuery)
+        querySnap.forEach( (doc) => {
+            console.log(doc.id, '->' , doc.data())
+
+            let obj = {
+                id: doc.id,
+                data: doc.data()
+            }
+
+            console.log(obj)
+
+            setUserData( (prevState) => {
+                return [
+                    ...prevState,
+                    obj
+                ]
+            })
+        })
+
+        console.log(userData)
+
+       
     }
 
     return (
@@ -268,6 +345,7 @@ const UserDashboard = () => {
            <div className="dashboardRight">
                 <div className="dashContentLeft">
                     hi
+                    
                 </div>
            </div>
 
