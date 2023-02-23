@@ -277,8 +277,31 @@ input[type=file] {
   border: 2px solid var(--borderColor);
 }
 
-#img-form {
+#img-form, #loading-div {
   padding: 200px;
+}
+
+.post-img {
+  width: 400px;
+  height: 300px;
+  object-fit: contain;
+  border-radius: 2px;
+  border: 1px solid var(--borderColor);
+  mix-blend-mode: multiply;
+}
+
+.postHeaderDiv {
+  display:flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.postHeaderProf {
+  width: 30px;
+  height: 30px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 .uploadImg {

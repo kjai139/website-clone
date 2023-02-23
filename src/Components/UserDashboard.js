@@ -10,7 +10,7 @@ import burgerIcon from "./Assets/images/dashboard-icons/menu-burger.svg"
 import defaultProfIcon from "./Assets/images/dashboard-icons/default-prof.png"
 import dragIcon from "./Assets/images/drag-icon.svg"
 import spinGif from "./Assets/images/gifs/spin.gif"
-import checkGif from "./Assets/images/gifs/check-mark.gif"
+import checkGif from "./Assets/images/gifs/check-mark-once.gif"
 
 
 
@@ -155,6 +155,9 @@ const UserDashboard = () => {
     const [txtAreaWC, setTxtAreaWC] = useState(0)
 
     const [loadingStatus, setloadingStatus] = useState(spinGif)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const [isPostCreated, setIsPostCreated] = useState(false)
 
     const handleTxtChange = (e) => {
         setTxtAreaCont(e.target.value)
@@ -190,6 +193,7 @@ const UserDashboard = () => {
                         break;
                     case 'running':
                         console.log('running upload')
+                        setIsLoading(true)
                         break;
                     default:
                         console.log('doin nothing')
@@ -205,6 +209,10 @@ const UserDashboard = () => {
                     imageUrl: publicImgUrl,
                     
                 })
+
+                setIsLoading(false)
+                setloadingStatus(checkGif)
+                setIsPostCreated(true)
 
             })
 
@@ -252,11 +260,55 @@ const UserDashboard = () => {
         )
     }
 
+    const renderLoading = () => {
+        return (
+            <div className="createFormDiv">
+            <div className="createHeader">Create new post</div>
+            <div id="loading-div">
+                <div className="formCont">
+                <div className="uploadImg" style={{
+                    backgroundImage:`url(${loadingStatus})`
+                }}>
+
+                </div>
+                
+                </div>
+            </div>
+
+            </div>
+        )
+    }
+
+    const renderFinishPost = () => {
+        return (
+            <div className="createFormDiv">
+            <div className="createHeader">Create new post</div>
+            <div id="loading-div">
+                <div className="formCont">
+                <div className="checkTxt">Post Shared</div>
+                <div className="uploadImg" style={{
+                    backgroundImage:`url(${loadingStatus})`
+                }}>
+
+                </div>
+                
+                </div>
+            </div>
+
+            </div>
+        )
+    }
+
     const closeOverlay = () => {
         setIsCreateOn(false)
         setIsOverlayOn(false)
         setIsImgUploaded(false)
         setTxtAreaWC(0)
+        
+        setIsLoading(false)
+        setIsPostCreated(false)
+        setloadingStatus(spinGif)
+
         loadPosts()
     }
 
@@ -288,7 +340,7 @@ const UserDashboard = () => {
 
     const loadPosts = async () => {
         setUserData([])
-        const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
+        const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp'), limit(5))
 
         const querySnap = await getDocs(recentPostQuery)
         querySnap.forEach( (doc) => {
@@ -314,10 +366,33 @@ const UserDashboard = () => {
        
     }
 
+    const renderPosts = () => {
+        return userData.map( value => 
+            <div className="contentDiv" key={`post-${value.id}`}>
+                <div className="postHeaderDiv">
+                <div className="postHeaderProf" style={{
+                    backgroundImage:`url(${value.data.profilePicUrl})`
+                }}>
+
+                </div>
+                
+                <div className="postHeader">
+                    {value.data.name}
+                </div>
+                </div>
+                <img className="post-img" alt="" src={value.data.imageUrl}>
+                    
+                </img>
+            </div>
+        )
+    }
+
     return (
         <div className="dashboardDiv">
             {isCreateOn && isImgUploaded === false ? renderCreate() : null}
-            {isImgUploaded ? renderCreateShare() : null}
+            {isImgUploaded && !isLoading && isPostCreated === false ? renderCreateShare() : null}
+            {isImgUploaded && isLoading && !isPostCreated ? renderLoading() : null}
+            {!isLoading && isPostCreated ? renderFinishPost() : null}
         <div className={`overlay ${isOverlayOn ? undefined : 'hidden'}`} onClick={closeOverlay}></div>
            <div className="dashboardLeft">
                 
@@ -344,7 +419,7 @@ const UserDashboard = () => {
            </div>
            <div className="dashboardRight">
                 <div className="dashContentLeft">
-                    hi
+                    {renderPosts()}
                     
                 </div>
            </div>
