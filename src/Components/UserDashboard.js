@@ -29,8 +29,43 @@ const UserDashboard = () => {
     }
 
     const [profilePic, setProfilePic] = useState(defaultProfIcon)
-    
 
+    
+    
+    useEffect( () => {
+        const loadPostInitial = async () => {
+            setUserData([])
+            const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp'), limit(5))
+
+            let list = []
+
+            const querySnap = await getDocs(recentPostQuery)
+            querySnap.forEach( (doc) => {
+                console.log(doc.id, '->' , doc.data())
+
+                let obj = {
+                    id: doc.id,
+                    data: doc.data()
+                }
+
+                console.log(obj)
+
+                list.push(obj)
+
+                
+
+              
+            })
+            console.log('list', list)
+            setUserData(list)
+        } 
+
+        
+        loadPostInitial()
+        .catch(console.error)
+    }, [])
+
+    
 
 
    const {state} = useLocation()
@@ -387,6 +422,29 @@ const UserDashboard = () => {
         )
     }
 
+    const renderProfileRight = () => {
+        return (
+            <div className="dashRightTopDiv">
+                <div className="dashRightProf">
+                    <div className="dashRightProfPic" style={{
+                        backgroundImage:`url(${profUrl})`
+                    }}>
+
+                    </div>
+                    <div className="dashRightProfName">
+                        {getUserName()}
+                    </div>
+                    <button className="switchAccBtn">
+                        Switch
+                    </button>
+                </div>
+
+            </div>
+        )
+    }
+
+    
+
     return (
         <div className="dashboardDiv">
             {isCreateOn && isImgUploaded === false ? renderCreate() : null}
@@ -421,6 +479,9 @@ const UserDashboard = () => {
                 <div className="dashContentLeft">
                     {renderPosts()}
                     
+                </div>
+                <div className="dashContentRight">
+                    {renderProfileRight()}
                 </div>
            </div>
 
