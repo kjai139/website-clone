@@ -3,7 +3,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400;1,700&display=swap');
 
-
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300;1,400;1,600&display=swap');
 
 :root {
   --logoFont: 'Cookie', cursive;
@@ -17,6 +17,9 @@
   --btnBlue: #60a5fa;
   --googleGreen: #34d399;
   --overlay: rgba(0,0,0,0.5);
+  --postNameColor: #475569;
+  --cmtFont: 'Noto Sans', sans-serif;
+  --cmtColor: #334155;
 }
 
 * {
@@ -297,6 +300,7 @@ input[type=file] {
 }
 
 .postHeaderProf {
+  border-radius: 50%;
   width: 30px;
   height: 30px;
   background-size: contain;
@@ -443,11 +447,77 @@ label:hover {
 }
 
 .dashContentLeft {
-  padding: 5% 10px 10px 10%;
+  padding: 5% 10px 10px 20%;
   display: flex;
   flex-direction: column;
   gap: 20px;
+  flex: 1;
+}
+
+.dashContentRight {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.postCmtsDiv {
+
+  display: flex;
+  gap: 5px;
+}
+
+.opName {
+  font-size: 12px;
+  color: var(--postNameColor);
+  font-weight: bold;
+  font-family: var(--textFont);
+}
+
+.postComments {
+  font-size: 14px;
+  font-family: var(--cmtFont);
+  color: var(--cmtColor);
   
+  
+}
+
+.contentDiv {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.dashRightTop {
+  margin: 10%;
+}
+
+.switchAccBtn {
+  background-color: inherit;
+  font-weight: bold;
+  border: 0;
+  color: var(--signBlue);
+}
+
+.switchAccBtn:hover {
+  filter: brightness(50%);
+  cursor: pointer;
+
+}
+
+
+.dashRightProf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashRightProfPic {
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
 }
 
 
@@ -504,6 +574,7 @@ label:hover {
 
 
 .dashBtnImg {
+  
   width: 24px;
   height:24px;
   background-position: center;

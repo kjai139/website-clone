@@ -1,4 +1,4 @@
-import { getAuth } from "firebase/auth"
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 import homeIcon from "./Assets/images/dashboard-icons/home-icon.svg"
 import searchIcon from "./Assets/images/dashboard-icons/search-icon.svg"
 import exploreIcon from "./Assets/images/dashboard-icons/explore-icon.svg"
@@ -14,7 +14,7 @@ import checkGif from "./Assets/images/gifs/check-mark-once.gif"
 
 
 
-import { Link, useLocation } from "react-router-dom"
+import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { fireStore, firebaseAuth, storage } from "../firebase"
 import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
@@ -29,10 +29,23 @@ const UserDashboard = () => {
     }
 
     const [profilePic, setProfilePic] = useState(defaultProfIcon)
+    const navigate = useNavigate()
 
-    
+    const [userName, setUserName] = useState()
+
+   const auth = getAuth()
+   
     
     useEffect( () => {
+
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                setUserName(user.displayName)
+            } else {
+
+            }
+        })
+
         const loadPostInitial = async () => {
             setUserData([])
             const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp'), limit(5))
@@ -201,13 +214,18 @@ const UserDashboard = () => {
 
     const createNewPost = async () => {
         try {
+            
             const postRef = await addDoc(collection(fireStore, "blogPosts"), {
                 name:getUserName(),
                 imageUrl: spinGif,
                 profilePicUrl: profUrl,
                 timeStamp: serverTimestamp(),
                 caption: txtAreaCont,
-                comments:[]
+                comments:[{
+                    op:getUserName(),
+                    comment: txtAreaCont,
+                    
+                }]
     
             })
 
@@ -279,7 +297,7 @@ const UserDashboard = () => {
 
                             </div>
                             <div className="boxProfName">
-                                {getUserName()}
+                                {userName}
                             </div>
                             
                         </div>
@@ -375,8 +393,8 @@ const UserDashboard = () => {
 
     const loadPosts = async () => {
         setUserData([])
-        const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp'), limit(5))
-
+        const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
+        let list = []
         const querySnap = await getDocs(recentPostQuery)
         querySnap.forEach( (doc) => {
             console.log(doc.id, '->' , doc.data())
@@ -387,21 +405,41 @@ const UserDashboard = () => {
             }
 
             console.log(obj)
+            list.push(obj)
 
-            setUserData( (prevState) => {
-                return [
-                    ...prevState,
-                    obj
-                ]
-            })
+            // setUserData( (prevState) => {
+            //     return [
+            //         ...prevState,
+            //         obj
+            //     ]
+            // })
         })
-
+        setUserData(list)
         console.log(userData)
 
        
     }
 
     const renderPosts = () => {
+        const renderCmts = (value) => {
+            console.log(value)
+            let max = value.data.comments.length
+            if (max > 3) {
+                max = 3
+            }
+
+            return value.data.comments.slice(0, max).map( (cmts, i) => 
+                <div className="postCmtsDiv" key={`${value.id}-${i}-post`}>
+                    <div key={`${value.id}-${i}-op`} className="opName"> 
+                        {cmts.op}  
+                    </div>
+                    <div key={`${value.id}-${i}-cmt`} className="postComments">
+                        {cmts.comment}
+                    </div>
+                </div>
+            )
+        }
+
         return userData.map( value => 
             <div className="contentDiv" key={`post-${value.id}`}>
                 <div className="postHeaderDiv">
@@ -418,6 +456,9 @@ const UserDashboard = () => {
                 <img className="post-img" alt="" src={value.data.imageUrl}>
                     
                 </img>
+                <div className="captionsDiv">
+                    {renderCmts(value)}
+                </div>
             </div>
         )
     }
@@ -432,7 +473,7 @@ const UserDashboard = () => {
 
                     </div>
                     <div className="dashRightProfName">
-                        {getUserName()}
+                        {userName}
                     </div>
                     <button className="switchAccBtn">
                         Switch
