@@ -48,7 +48,7 @@ const UserDashboard = () => {
 
         const loadPostInitial = async () => {
             setUserData([])
-            const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp'), limit(5))
+            const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
 
             let list = []
 
@@ -420,6 +420,23 @@ const UserDashboard = () => {
        
     }
 
+    const postNewComments = (e) => {
+        e.preventDefault()
+        console.log(e.target.value)
+        let form = e.target.parentNode.parentNode
+        const formData = new FormData(form)
+
+        console.log(formData)
+        const postComment = formData.get('comment')
+
+        console.log(postComment)
+        form.reset()
+    }
+
+    const [isCommentPosting, setIsCommentPosting] = useState(false)
+
+    const [cmtLoadingStatus, setCmtLoadingStatus] = useState(spinGif)
+
     const renderPosts = () => {
         const renderCmts = (value) => {
             console.log(value)
@@ -458,6 +475,23 @@ const UserDashboard = () => {
                 </img>
                 <div className="captionsDiv">
                     {renderCmts(value)}
+                </div>
+                <div className="addCommentOuterDiv">
+                    <div className={`commentOverlay ${isCommentPosting ? null : `hidden`}`} style={{
+                        backgroundImage: `url(${cmtLoadingStatus})`
+                    }}>
+                       
+
+                    </div>
+                    <div className="addCommentDiv">
+                        <form>
+                        <label className="cmtLabel">
+                        <textarea name="comment" className="commentInp" placeholder="Add a comment..."></textarea>
+                        <button className="postBtn" onClick={postNewComments} value={value.id}>Post</button>
+                        </label>
+                        </form>
+                    </div>
+
                 </div>
             </div>
         )
