@@ -17,7 +17,7 @@ import checkGif from "./Assets/images/gifs/check-mark-once.gif"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { fireStore, firebaseAuth, storage } from "../firebase"
-import { addDoc, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
 
 const UserDashboard = () => {
@@ -420,17 +420,40 @@ const UserDashboard = () => {
        
     }
 
-    const postNewComments = (e) => {
+    const postNewComments = async (e) => {
         e.preventDefault()
+        
         console.log(e.target.value)
         let form = e.target.parentNode.parentNode
         const formData = new FormData(form)
+        let docRef = e.target.value
 
         console.log(formData)
         const postComment = formData.get('comment')
 
         console.log(postComment)
-        form.reset()
+        // form.reset()
+
+        const postRef = doc(fireStore, "blogPosts", docRef)
+
+        try {
+            setIsCommentPosting(true)
+            await updateDoc(postRef, {
+                comments:arrayUnion({
+                    comment:postComment,
+                    op:getUserName()
+                })
+            })
+            
+            setIsCommentPosting(false)
+            loadPosts()
+        } catch(error) {
+            console.log('error updating doc', error)
+        }
+        
+
+        
+
     }
 
     const [isCommentPosting, setIsCommentPosting] = useState(false)

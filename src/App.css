@@ -390,6 +390,7 @@ input:focus {
 .addCommentDiv {
   border-bottom: 1px solid var(--borderColor);
   padding-bottom: 10px;
+  max-width: 400px;
 }
 
 label {
