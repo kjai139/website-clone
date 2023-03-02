@@ -33,6 +33,9 @@ const Homepage = () => {
 
     const signIn = async () => {
         let provider = new GoogleAuthProvider()
+        provider.setCustomParameters({
+            prompt:'select_account'
+        })
         await signInWithPopup(firebaseAuth, provider)
     }
 

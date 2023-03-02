@@ -1,4 +1,4 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { getAuth, onAuthStateChanged, signOut } from "firebase/auth"
 import homeIcon from "./Assets/images/dashboard-icons/home-icon.svg"
 import searchIcon from "./Assets/images/dashboard-icons/search-icon.svg"
 import exploreIcon from "./Assets/images/dashboard-icons/explore-icon.svg"
@@ -42,7 +42,8 @@ const UserDashboard = () => {
             if (user) {
                 setUserName(user.displayName)
             } else {
-
+                console.log('user is signed out')
+                navigate('/')
             }
         })
 
@@ -127,8 +128,12 @@ const UserDashboard = () => {
 
     ]
 
+    const [isHighlighted, setIsHighlighted] = useState()
+
     const btnFunction = (v) => {
-        
+        console.log(v)
+        setIsHighlighted(v.btnTitle)
+        console.log(isHighlighted)
         if (v.btnTitle === 'Create'){
             setIsCreateOn(true)
             setIsOverlayOn(true)
@@ -139,12 +144,10 @@ const UserDashboard = () => {
     const renderSideBar = () => {
         return sidebarObj.map( value => 
         <li key={`li-${value.id}`}>
-            <button className="dashBtns" key={`btn-${value.id}`} onClick={() => btnFunction(value)}>
-                <div className="dashBtnImg" key={`btnImg-${value.id}`} style={{
-                    backgroundImage:`url(${value.svgImg})`
-                }}>
+            <button className={`dashBtns ${value.btnTitle === isHighlighted? 'highlighted' : null}`} key={`btn-${value.id}`} onClick={() => btnFunction(value)}>
+                <img className="dashBtnImg" key={`btnImg-${value.id}`} src={value.svgImg} alt="">
 
-                </div>
+                </img>
                 <div className="dashBtnTxt" key={`btnTitle-${value.id}`}>
                     {value.btnTitle}
                 </div>
@@ -196,6 +199,29 @@ const UserDashboard = () => {
 
             </div>
 
+        )
+    }
+
+    const renderPostDetails = (e) => {
+
+
+        return (
+            <div className="createFormDiv">
+                <div className="postDetailsDiv">
+                    <div className="postDLeft">
+
+                    </div>
+                    <div className="postDRight">
+
+                    </div>
+
+                </div>
+
+
+
+
+
+            </div>
         )
     }
 
@@ -361,6 +387,7 @@ const UserDashboard = () => {
         setIsLoading(false)
         setIsPostCreated(false)
         setloadingStatus(spinGif)
+        setIsHighlighted('')
 
         loadPosts()
     }
@@ -392,7 +419,7 @@ const UserDashboard = () => {
     const [userData, setUserData] = useState([])
 
     const loadPosts = async () => {
-        setUserData([])
+        
         const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
         let list = []
         const querySnap = await getDocs(recentPostQuery)
@@ -446,6 +473,7 @@ const UserDashboard = () => {
             })
             
             setIsCommentPosting(false)
+            form.reset()
             loadPosts()
         } catch(error) {
             console.log('error updating doc', error)
@@ -507,6 +535,9 @@ const UserDashboard = () => {
 
                     </div>
                     <div className="addCommentDiv">
+                        <button className="viewMoreBtn">
+                            <p>{value.data.comments.length > 3 ? `View all ${value.data.comments.length} comments` : 'View post'}</p>
+                        </button>
                         <form>
                         <label className="cmtLabel">
                         <textarea name="comment" className="commentInp" placeholder="Add a comment..."></textarea>
@@ -518,6 +549,10 @@ const UserDashboard = () => {
                 </div>
             </div>
         )
+    }
+
+    const signOutUser = () => {
+        signOut(auth)
     }
 
     const renderProfileRight = () => {
@@ -532,7 +567,7 @@ const UserDashboard = () => {
                     <div className="dashRightProfName">
                         {userName}
                     </div>
-                    <button className="switchAccBtn">
+                    <button className="switchAccBtn" onClick={signOutUser}>
                         Switch
                     </button>
                 </div>
@@ -541,7 +576,7 @@ const UserDashboard = () => {
         )
     }
 
-    
+    const [isOverlayCOn, setisOverlayCOn] = useState(false)
 
     return (
         <div className="dashboardDiv">
@@ -550,6 +585,7 @@ const UserDashboard = () => {
             {isImgUploaded && isLoading && !isPostCreated ? renderLoading() : null}
             {!isLoading && isPostCreated ? renderFinishPost() : null}
         <div className={`overlay ${isOverlayOn ? undefined : 'hidden'}`} onClick={closeOverlay}></div>
+        <div className={`overlay-cancel ${isOverlayCOn ? undefined : 'hidden'}`}></div>
            <div className="dashboardLeft">
                 
                 <ul className="dashList">

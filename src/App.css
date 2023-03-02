@@ -17,9 +17,10 @@
   --btnBlue: #60a5fa;
   --googleGreen: #34d399;
   --overlay: rgba(0,0,0,0.5);
-  --postNameColor: #475569;
+  --postNameColor: #111827;
   --cmtFont: 'Noto Sans', sans-serif;
   --cmtColor: #334155;
+  --listHoverColor: #f1f5f9;
 }
 
 * {
@@ -49,6 +50,15 @@ body {
 
 
 .overlay {
+  position: absolute;
+  top:0;
+  width: 100%;
+  height:100%;
+  z-index: 9996;
+  background-color: var(--overlay);
+}
+
+.overlay-cancel {
   position: absolute;
   top:0;
   width: 100%;
@@ -87,7 +97,7 @@ body {
   left: 50%;
   top: 50%;
 
-  z-index: 9999;
+  z-index: 9997;
   background-color: white;
   
   border-radius: 8px;
@@ -365,6 +375,27 @@ input:focus {
   margin: 30px 0px 30px 0px;
 }
 
+.highlighted > .dashBtnImg {
+  filter: invert(0%) sepia(90%) saturate(7500%) hue-rotate(346deg) brightness(89%) contrast(111%);
+
+
+}
+
+.highlighted > .dashBtnTxt {
+  font-weight: bold;
+}
+
+.viewMoreBtn {
+  background-color: inherit;
+  border: 0;
+  color: var(--overlay);
+  margin-bottom: 5px;
+}
+
+.viewMoreBtn:hover {
+  cursor: pointer;
+}
+
 
 
 .homeLoginForm {
@@ -624,9 +655,19 @@ label:hover {
   font-size: 16px;
   font-family: var(--textFont);
   font-weight: lighter;
+  flex: 1;
+  border-radius: 10px;
+  padding: 5px;
   
 }
 
+.dashBtns:hover {
+  background-color: var(--listHoverColor);
+}
+
+.dashList > li {
+  display:flex;
+}
 
 .dashBtnImg {
   
