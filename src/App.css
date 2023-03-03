@@ -597,6 +597,10 @@ label:hover {
   gap: 10px;
 }
 
+.dashRightProfName {
+  white-space: nowrap;
+}
+
 .dashRightProfPic {
   border-radius: 50%;
   width: 40px;
@@ -643,7 +647,147 @@ label:hover {
   gap: 10px;
 }
 
+.cancelC-div {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  z-index: 9999;
+  background-color: white;
+  border-radius: 8px;
 
+  display:flex;
+  flex-direction: column;
+  
+  
+}
+
+.pd-img {
+  display: flex;
+  flex: 1 1 0;
+  width: 0;
+  object-fit: cover;
+}
+
+.postDetailDiv {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  left: 50%;
+  top: 50%;
+  z-index: 9999;
+  background-color: white;
+  
+
+  display:flex;
+  flex-direction: column;
+
+  width: 80%;
+  height: 70%;
+  border-radius: 5px;
+}
+
+.postDRight, .postDLeft, .postDetailInner {
+  display: flex;
+  flex: 1;
+}
+
+.postDLeft {
+  padding: 20px;
+
+}
+
+.postDRight {
+  flex-direction: column;
+  border-left: 1px solid var(--borderColor);
+}
+
+.postDetails-header {
+  display:flex;
+
+  align-items: center;
+  padding: 20px;
+  gap: 5px;
+  border-bottom: 1px solid var(--borderColor);
+}
+
+.op-img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.dpost-header {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 40px 20px 40px;
+  gap: 5px;
+}
+
+.dpost-header > :nth-child(1) {
+  text-align: center;
+
+  
+}
+
+.post-d-opName {
+  font-weight: bold;
+  font-family: var(--cmtFont);
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.post-d-Comments {
+  font-size: 12px;
+  font-family: var(--cmtFont);
+  flex: 1;
+}
+
+.post-d-img {
+  width: 26px;
+  height: 26px;
+  object-fit: contain;
+  border-radius: 50%;
+}
+
+.post-d-div {
+  margin-top: auto;
+  padding: 10px;
+}
+
+.post-d-CmtsDiv {
+  display: flex;
+  gap:5px;
+  align-items: center;
+  margin: 5px 5px 5px 10px;
+}
+
+.dpost-header > :nth-child(2) {
+  text-align: center;
+  font-size: 12px;
+  color: var(--focusGray);
+}
+
+.dpost-discard, .dpost-cancel {
+  border: 0;
+  background-color: inherit;
+  padding: 10px;
+  border-top: 1px solid var(--borderColor);
+  
+}
+
+.dpost-discard:hover, .dpost-cancel:hover {
+  cursor: pointer;
+}
+
+.dpost-discard {
+  color: red;
+  font-weight: bold;
+}
+
+.dpost-cancel {
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
 
 .dashBtns{
   display:flex;

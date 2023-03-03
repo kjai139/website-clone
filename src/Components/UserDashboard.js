@@ -131,9 +131,9 @@ const UserDashboard = () => {
     const [isHighlighted, setIsHighlighted] = useState()
 
     const btnFunction = (v) => {
-        console.log(v)
+        
         setIsHighlighted(v.btnTitle)
-        console.log(isHighlighted)
+        
         if (v.btnTitle === 'Create'){
             setIsCreateOn(true)
             setIsOverlayOn(true)
@@ -202,16 +202,55 @@ const UserDashboard = () => {
         )
     }
 
-    const renderPostDetails = (e) => {
+    const renderPostDetails = () => {
 
+        console.log(postDetails)
+
+        const renderPostCmts = () => {
+            
+            let max = postDetails.data.comments.length
+            if (max > 10) {
+                max = 10
+            }
+
+            return postDetails.data.comments.slice(0, max).map( (cmts, i) => 
+                <div className="post-d-CmtsDiv" key={`${postDetails.id}-${i}-post-d`}>
+                    <img className="post-d-img" key={`${postDetails.id}-${i}-post-prof`} src={cmts.profPic ? cmts.profPic : ''} alt=""></img>
+                    <div key={`${postDetails.id}-${i}-post-d-op`} className="post-d-opName"> 
+                        {cmts.op}  
+                    </div>
+                    <div key={`${postDetails.id}-${i}-post-d-cmt`} className="post-d-Comments">
+                        {cmts.comment}
+                    </div>
+                </div>
+            )
+        }
 
         return (
-            <div className="createFormDiv">
-                <div className="postDetailsDiv">
+            <div className="postDetailDiv">
+                <div className="postDetailInner">
                     <div className="postDLeft">
+                        <img className="pd-img" src={postDetails.data.imageUrl} alt="postImage">
+                        </img>
 
                     </div>
                     <div className="postDRight">
+                        <div className="postDetails-header">
+                            <img className="op-img" src={postDetails.data.profilePicUrl} alt=""></img>
+                            <div>
+                                {postDetails.data.name}
+                            </div>
+                        </div>
+                        {renderPostCmts()}
+
+                        <div className="post-d-div">
+                        <form>
+                        <label className="cmtLabel">
+                        <textarea rows={1} name="comment" className="commentInp" placeholder="Add a comment..."></textarea>
+                        <button className="postBtn" value={postDetails.id}>Post</button>
+                        </label>
+                        </form>
+                        </div>
 
                     </div>
 
@@ -250,6 +289,7 @@ const UserDashboard = () => {
                 comments:[{
                     op:getUserName(),
                     comment: txtAreaCont,
+                    profPic: profUrl
                     
                 }]
     
@@ -381,6 +421,7 @@ const UserDashboard = () => {
     const closeOverlay = () => {
         setIsCreateOn(false)
         setIsOverlayOn(false)
+        setisPostDetailsOpen(false)
         setIsImgUploaded(false)
         setTxtAreaWC(0)
         
@@ -447,6 +488,23 @@ const UserDashboard = () => {
        
     }
 
+    const detailedPostNewComment = async (e) => {
+        e.preventDefault()
+
+        let form = e.target.parentNode.parentNode
+
+        const formData = new FormData(form)
+
+        let docRef = postDetails.id
+        console.log('docref', docRef)
+
+        const newComment = formData.get('comment')
+
+        const postRef = doc(fireStore, "blogPosts", docRef)
+
+        
+    }
+
     const postNewComments = async (e) => {
         e.preventDefault()
         
@@ -468,7 +526,8 @@ const UserDashboard = () => {
             await updateDoc(postRef, {
                 comments:arrayUnion({
                     comment:postComment,
-                    op:getUserName()
+                    op:getUserName(),
+                    profPic: getAuth().currentUser.photoURL
                 })
             })
             
@@ -488,6 +547,8 @@ const UserDashboard = () => {
 
     const [cmtLoadingStatus, setCmtLoadingStatus] = useState(spinGif)
 
+    const [postDetails, setPostDetails] = useState()
+
     const renderPosts = () => {
         const renderCmts = (value) => {
             console.log(value)
@@ -498,6 +559,7 @@ const UserDashboard = () => {
 
             return value.data.comments.slice(0, max).map( (cmts, i) => 
                 <div className="postCmtsDiv" key={`${value.id}-${i}-post`}>
+                    
                     <div key={`${value.id}-${i}-op`} className="opName"> 
                         {cmts.op}  
                     </div>
@@ -506,6 +568,11 @@ const UserDashboard = () => {
                     </div>
                 </div>
             )
+        }
+
+        const loadPostDetails = (v) => {
+            setisPostDetailsOpen(true)
+            setPostDetails(v)
         }
 
         return userData.map( value => 
@@ -535,7 +602,7 @@ const UserDashboard = () => {
 
                     </div>
                     <div className="addCommentDiv">
-                        <button className="viewMoreBtn">
+                        <button className="viewMoreBtn" onClick={() => loadPostDetails(value)}>
                             <p>{value.data.comments.length > 3 ? `View all ${value.data.comments.length} comments` : 'View post'}</p>
                         </button>
                         <form>
@@ -576,7 +643,45 @@ const UserDashboard = () => {
         )
     }
 
-    const [isOverlayCOn, setisOverlayCOn] = useState(false)
+    const [isOverlayCOn, setIsOverlayCOn] = useState(false)
+
+    const renderConfirmCancel = () => {
+
+
+
+        return (
+            <div className="cancelC-div">
+                <div className="dpost-header">
+                    <p>Discard post?</p>
+                    <p>If you leave, your edits won't be saved.</p>
+                </div>
+                <button className="dpost-discard" onClick={discardPost}>
+                    Discard
+                </button>
+                <button className="dpost-cancel" onClick={() => setIsOverlayCOn(false)}>
+                    Cancel
+                </button>
+
+            </div>
+        )
+    }
+
+    const checkIfConfirm = () => {
+
+        if (isImgUploaded && !isLoading && isPostCreated === false) {
+            console.log('confirm cancel')
+            setIsOverlayCOn(true)
+        } else {
+            closeOverlay()
+        }
+    }
+
+    const discardPost = () => {
+        setIsOverlayCOn(false)
+        closeOverlay()
+    }
+
+    const [isPostDetailsOpen, setisPostDetailsOpen] = useState(false)
 
     return (
         <div className="dashboardDiv">
@@ -584,8 +689,10 @@ const UserDashboard = () => {
             {isImgUploaded && !isLoading && isPostCreated === false ? renderCreateShare() : null}
             {isImgUploaded && isLoading && !isPostCreated ? renderLoading() : null}
             {!isLoading && isPostCreated ? renderFinishPost() : null}
-        <div className={`overlay ${isOverlayOn ? undefined : 'hidden'}`} onClick={closeOverlay}></div>
-        <div className={`overlay-cancel ${isOverlayCOn ? undefined : 'hidden'}`}></div>
+            {isOverlayCOn ? renderConfirmCancel() : null}
+            {isPostDetailsOpen ? renderPostDetails() : null}
+        <div className={`overlay ${isOverlayOn || isPostDetailsOpen ? undefined : 'hidden'}`} onClick={checkIfConfirm}></div>
+        <div className={`overlay-cancel ${isOverlayCOn ? undefined : 'hidden'}`} onClick={ () => setIsOverlayCOn(false)}></div>
            <div className="dashboardLeft">
                 
                 <ul className="dashList">
