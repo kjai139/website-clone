@@ -202,18 +202,20 @@ const UserDashboard = () => {
         )
     }
 
+    const [isDCmtLoading, setIsDCmtLoading] = useState(false)
+
     const renderPostDetails = () => {
 
         console.log(postDetails)
 
         const renderPostCmts = () => {
             
-            let max = postDetails.data.comments.length
+            let max = postDetails.comments.length
             if (max > 10) {
                 max = 10
             }
 
-            return postDetails.data.comments.slice(0, max).map( (cmts, i) => 
+            return postDetails.comments.slice(0, max).map( (cmts, i) => 
                 <div className="post-d-CmtsDiv" key={`${postDetails.id}-${i}-post-d`}>
                     <img className="post-d-img" key={`${postDetails.id}-${i}-post-prof`} src={cmts.profPic ? cmts.profPic : ''} alt=""></img>
                     <div key={`${postDetails.id}-${i}-post-d-op`} className="post-d-opName"> 
@@ -230,27 +232,35 @@ const UserDashboard = () => {
             <div className="postDetailDiv">
                 <div className="postDetailInner">
                     <div className="postDLeft">
-                        <img className="pd-img" src={postDetails.data.imageUrl} alt="postImage">
+                        <img className="pd-img" src={postDetails.imageUrl} alt="postImage">
                         </img>
 
                     </div>
                     <div className="postDRight">
                         <div className="postDetails-header">
-                            <img className="op-img" src={postDetails.data.profilePicUrl} alt=""></img>
+                            <img className="op-img" src={postDetails.profilePicUrl} alt=""></img>
                             <div>
-                                {postDetails.data.name}
+                                {postDetails.name}
                             </div>
                         </div>
                         {renderPostCmts()}
 
                         <div className="post-d-div">
+                        <div className={`dpost-overlay ${isDCmtLoading ? null : 'hidden'}`}>
+                        </div>
                         <form>
+                        
                         <label className="cmtLabel">
+                        
+                        
                         <textarea rows={1} name="comment" className="commentInp" placeholder="Add a comment..."></textarea>
-                        <button className="postBtn" value={postDetails.id}>Post</button>
+                        <button className="postBtn" value={postDetailsID} onClick={detailedPostNewComment}>Post</button>
+                        
                         </label>
+                        
                         </form>
                         </div>
+                        
 
                     </div>
 
@@ -459,6 +469,23 @@ const UserDashboard = () => {
 
     const [userData, setUserData] = useState([])
 
+    const refreshPostDetails = async (ref) => {
+        let postRef = doc(fireStore, "blogPosts", ref)
+        const docSnap = await getDoc(postRef)
+
+        if (docSnap.exists()) {
+            console.log(docSnap)
+            console.log(docSnap.id)
+            console.log(docSnap.data())
+
+            let obj = docSnap.data()
+            setPostDetails(obj)
+            
+        } else {
+            console.log('doc not found')
+        }
+    }
+
     const loadPosts = async () => {
         
         const recentPostQuery = query(collection(fireStore, 'blogPosts'), orderBy('timeStamp', 'desc'), limit(5))
@@ -495,14 +522,31 @@ const UserDashboard = () => {
 
         const formData = new FormData(form)
 
-        let docRef = postDetails.id
+        let docRef = postDetailsID
         console.log('docref', docRef)
 
         const newComment = formData.get('comment')
+        console.log('comment-d-post', newComment)
 
         const postRef = doc(fireStore, "blogPosts", docRef)
 
-        
+        try {
+            setIsDCmtLoading(true)
+            await updateDoc(postRef, {
+                comments:arrayUnion({
+                    comment:newComment,
+                    op:getUserName(),
+                    profPic: getAuth().currentUser.photoURL
+                })
+            })
+
+            setIsDCmtLoading(false)
+            form.reset()
+            refreshPostDetails(docRef)
+
+        } catch(error) {
+            console.log('error updating dpost cmt', error)
+        }
     }
 
     const postNewComments = async (e) => {
@@ -549,6 +593,8 @@ const UserDashboard = () => {
 
     const [postDetails, setPostDetails] = useState()
 
+    const [postDetailsID, setPostDetailsID] = useState()
+
     const renderPosts = () => {
         const renderCmts = (value) => {
             console.log(value)
@@ -572,7 +618,8 @@ const UserDashboard = () => {
 
         const loadPostDetails = (v) => {
             setisPostDetailsOpen(true)
-            setPostDetails(v)
+            setPostDetails(v.data)
+            setPostDetailsID(v.id)
         }
 
         return userData.map( value => 
