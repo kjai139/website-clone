@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="App">
-      <BrowserRouter>
+      <BrowserRouter basename='/website-clone'>
       <Routes>
         <Route path='/' element={<Homepage />}></Route>
         <Route path='/dashboard' element={<UserDashboard />} />

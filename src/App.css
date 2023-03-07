@@ -5,6 +5,9 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300;1,400;1,600&display=swap');
 
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300&display=swap');
+
 :root {
   --logoFont: 'Cookie', cursive;
   --uiGray: #94a3b8;
@@ -318,8 +321,10 @@ input[type=file] {
 }
 
 .post-img {
-  width: 400px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
+  max-height: 300px;
   object-fit: contain;
   border-radius: 2px;
   border: 1px solid var(--borderColor);
@@ -569,6 +574,12 @@ label:hover {
   color: var(--postNameColor);
   font-weight: bold;
   font-family: var(--textFont);
+  white-space: nowrap;
+
+  
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 100px;
 }
 
 .postComments {
@@ -576,13 +587,24 @@ label:hover {
   font-family: var(--cmtFont);
   color: var(--cmtColor);
   
+  display: flex;
   
+  
+}
+
+.postComments-txt {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 300px;
 }
 
 .contentDiv {
   display: flex;
   flex-direction: column;
   gap: 5px;
+
+  max-width: 400px;
 }
 
 .dashRightTop {
@@ -746,19 +768,40 @@ label:hover {
   
 }
 
+.post-more-btn {
+  width: 16px;
+  height: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  border: 0;
+  background-color: inherit;
+  margin-left: auto;
+
+  transition: all .5s;
+}
+
+.post-more-btn:hover {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
 .post-d-opName {
   font-weight: bold;
   font-family: var(--cmtFont);
   font-size: 14px;
   white-space: nowrap;
+  padding-right: 5px;
 }
 
 .post-d-Comments {
   font-size: 12px;
   font-family: var(--cmtFont);
   flex: 1;
-  white-space: nowrap;
+  word-wrap: break-word;
   padding-right: 10px;
+  max-width: 70ch;
+  font-weight: 300;
 }
 
 .post-d-img {
@@ -777,7 +820,7 @@ label:hover {
 .post-d-CmtsDiv {
   display: flex;
   gap:5px;
-  align-items: center;
+  
   margin: 5px 5px 5px 10px;
 }
 
@@ -787,11 +830,17 @@ label:hover {
   color: var(--focusGray);
 }
 
+.roundTopBorders {
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
+}
+
 .dpost-discard, .dpost-cancel {
   border: 0;
   background-color: inherit;
   padding: 10px;
   border-top: 1px solid var(--borderColor);
+  padding: 20px 40px 20px 40px;
   
 }
 
@@ -840,4 +889,44 @@ label:hover {
   background-position: center;
   background-size: contain;
   
+}
+
+.flexDiv {
+  display: flex;
+}
+
+@media (max-width:600px) {
+  .dashBtnTxt {
+    visibility: hidden;
+    width: 0;
+  }
+
+  .postDetailInner {
+    flex-direction: column;
+  }
+  
+  #img-form {
+    padding: 20px;
+  }
+
+  .dashBtns {
+    justify-content: center;
+  }
+
+  .dashboardLeft {
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .dashContentLeft {
+    padding-left: 10px;
+  }
+
+  .dashContentRight {
+    visibility: hidden;
+  }
+
+  .dashLogo {
+    visibility: hidden;
+  }
 }

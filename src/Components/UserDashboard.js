@@ -11,20 +11,21 @@ import defaultProfIcon from "./Assets/images/dashboard-icons/default-prof.png"
 import dragIcon from "./Assets/images/drag-icon.svg"
 import spinGif from "./Assets/images/gifs/spin.gif"
 import checkGif from "./Assets/images/gifs/check-mark-once.gif"
+import postMoreIcon from "./Assets/images/dashboard-icons/more-post.svg"
 
 
 
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { fireStore, firebaseAuth, storage } from "../firebase"
-import { addDoc, arrayUnion, collection, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
+import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
 
 const UserDashboard = () => {
 
     const getUserName = () => {
-        console.log(getAuth().currentUser)
-        console.log(getAuth().currentUser.displayName)
+        // console.log(getAuth().currentUser)
+        // console.log(getAuth().currentUser.displayName)
         return getAuth().currentUser.displayName
     }
 
@@ -55,14 +56,14 @@ const UserDashboard = () => {
 
             const querySnap = await getDocs(recentPostQuery)
             querySnap.forEach( (doc) => {
-                console.log(doc.id, '->' , doc.data())
+                // console.log(doc.id, '->' , doc.data())
 
                 let obj = {
                     id: doc.id,
                     data: doc.data()
                 }
 
-                console.log(obj)
+                // console.log(obj)
 
                 list.push(obj)
 
@@ -70,7 +71,7 @@ const UserDashboard = () => {
 
               
             })
-            console.log('list', list)
+            // console.log('list', list)
             setUserData(list)
         } 
 
@@ -206,7 +207,7 @@ const UserDashboard = () => {
 
     const renderPostDetails = () => {
 
-        console.log(postDetails)
+        // console.log(postDetails)
 
         const renderPostCmts = () => {
             
@@ -218,11 +219,11 @@ const UserDashboard = () => {
             return postDetails.comments.slice(0, max).map( (cmts, i) => 
                 <div className="post-d-CmtsDiv" key={`${postDetails.id}-${i}-post-d`}>
                     <img className="post-d-img" key={`${postDetails.id}-${i}-post-prof`} src={cmts.profPic ? cmts.profPic : ''} alt=""></img>
-                    <div key={`${postDetails.id}-${i}-post-d-op`} className="post-d-opName"> 
+                    {/* <div key={`${postDetails.id}-${i}-post-d-op`} className="post-d-opName"> 
                         {cmts.op}  
-                    </div>
+                    </div> */}
                     <div key={`${postDetails.id}-${i}-post-d-cmt`} className="post-d-Comments">
-                        {cmts.comment}
+                        <p><span className="post-d-opName">{cmts.op}</span>{cmts.comment}</p>
                     </div>
                 </div>
             )
@@ -433,6 +434,7 @@ const UserDashboard = () => {
         setIsOverlayOn(false)
         setisPostDetailsOpen(false)
         setIsImgUploaded(false)
+        setisPostMorePopOn(false)
         setTxtAreaWC(0)
         
         setIsLoading(false)
@@ -462,7 +464,7 @@ const UserDashboard = () => {
             setIsImgUploaded(true)
             setImgFile(file)
             setupLoadedFileName(file.name)
-            console.log(file, [reader.result])
+            // console.log(file, [reader.result])
         }
         
     }
@@ -474,9 +476,9 @@ const UserDashboard = () => {
         const docSnap = await getDoc(postRef)
 
         if (docSnap.exists()) {
-            console.log(docSnap)
-            console.log(docSnap.id)
-            console.log(docSnap.data())
+            // console.log(docSnap)
+            // console.log(docSnap.id)
+            // console.log(docSnap.data())
 
             let obj = docSnap.data()
             setPostDetails(obj)
@@ -492,25 +494,20 @@ const UserDashboard = () => {
         let list = []
         const querySnap = await getDocs(recentPostQuery)
         querySnap.forEach( (doc) => {
-            console.log(doc.id, '->' , doc.data())
+            // console.log(doc.id, '->' , doc.data())
 
             let obj = {
                 id: doc.id,
                 data: doc.data()
             }
 
-            console.log(obj)
+            // console.log(obj)
             list.push(obj)
 
-            // setUserData( (prevState) => {
-            //     return [
-            //         ...prevState,
-            //         obj
-            //     ]
-            // })
+           
         })
         setUserData(list)
-        console.log(userData)
+        // console.log(userData)
 
        
     }
@@ -595,6 +592,8 @@ const UserDashboard = () => {
 
     const [postDetailsID, setPostDetailsID] = useState()
 
+    const [selectedPost, setSelectedPost] = useState()
+
     const renderPosts = () => {
         const renderCmts = (value) => {
             console.log(value)
@@ -610,7 +609,7 @@ const UserDashboard = () => {
                         {cmts.op}  
                     </div>
                     <div key={`${value.id}-${i}-cmt`} className="postComments">
-                        {cmts.comment}
+                        <p className="postComments-txt">{cmts.comment}</p>
                     </div>
                 </div>
             )
@@ -622,18 +621,42 @@ const UserDashboard = () => {
             setPostDetailsID(v.id)
         }
 
+        const postMoreOptions = (v) => {
+            console.log(v.id)
+            console.log(v.data.name)
+
+            setisPostMorePopOn(true)
+            setSelectedPost(v)
+
+            let loggedInUser = getUserName()
+
+            if (loggedInUser == v.data.name) {
+                setisPostbyUser(true)
+            } else {
+                setisPostbyUser(false)
+            }
+
+        }
+
         return userData.map( value => 
             <div className="contentDiv" key={`post-${value.id}`}>
                 <div className="postHeaderDiv">
-                <div className="postHeaderProf" style={{
-                    backgroundImage:`url(${value.data.profilePicUrl})`
-                }}>
+                    <div className="postHeaderProf" style={{
+                        backgroundImage:`url(${value.data.profilePicUrl})`
+                    }}>
 
-                </div>
-                
-                <div className="postHeader">
-                    {value.data.name}
-                </div>
+                    </div>
+                    
+                    <div className="postHeader">
+                        {value.data.name}
+                    </div>
+
+                    <button className="post-more-btn" style={{
+                        backgroundImage:`url(${postMoreIcon})`
+                    }} onClick={() => postMoreOptions(value)}>
+
+                    </button>
+
                 </div>
                 <img className="post-img" alt="" src={value.data.imageUrl}>
                     
@@ -713,6 +736,48 @@ const UserDashboard = () => {
         )
     }
 
+    const renderDeletePostMenu = () => {
+        return (
+            <div className="cancelC-div">
+                <button className="dpost-discard roundTopBorders" onClick={deletePost}>
+                    Delete Post
+                </button>
+                <button className="dpost-cancel" onClick={closeOverlay}>
+                    Cancel
+                </button>
+
+            </div>
+        )
+    }
+
+    const deletePost = async () => {
+        console.log('selected post', selectedPost)
+
+        let postRef = selectedPost.id
+
+        await deleteDoc(doc(fireStore, "blogPosts", postRef))
+        closeOverlay()
+    }
+
+    const reportPost = () => {
+        console.log('report post', selectedPost)
+    }
+
+
+    const renderReportPostMenu = () => {
+        return (
+            <div className="cancelC-div">
+                <button className="dpost-discard roundTopBorders" onClick={reportPost}>
+                    Report Post
+                </button>
+                <button className="dpost-cancel" onClick={closeOverlay}>
+                    Cancel
+                </button>
+
+            </div>
+        )
+    }
+
     const checkIfConfirm = () => {
 
         if (isImgUploaded && !isLoading && isPostCreated === false) {
@@ -730,6 +795,10 @@ const UserDashboard = () => {
 
     const [isPostDetailsOpen, setisPostDetailsOpen] = useState(false)
 
+    const [isPostMorePopOn, setisPostMorePopOn] = useState(false)
+
+    const [isPostByUser, setisPostbyUser] = useState(false)
+
     return (
         <div className="dashboardDiv">
             {isCreateOn && isImgUploaded === false ? renderCreate() : null}
@@ -738,7 +807,9 @@ const UserDashboard = () => {
             {!isLoading && isPostCreated ? renderFinishPost() : null}
             {isOverlayCOn ? renderConfirmCancel() : null}
             {isPostDetailsOpen ? renderPostDetails() : null}
-        <div className={`overlay ${isOverlayOn || isPostDetailsOpen ? undefined : 'hidden'}`} onClick={checkIfConfirm}></div>
+            {isPostMorePopOn && isPostByUser ? renderDeletePostMenu() : null}
+            {isPostMorePopOn && !isPostByUser ? renderReportPostMenu() : null}
+        <div className={`overlay ${isOverlayOn || isPostDetailsOpen || isPostMorePopOn ? undefined : 'hidden'}`} onClick={checkIfConfirm}></div>
         <div className={`overlay-cancel ${isOverlayCOn ? undefined : 'hidden'}`} onClick={ () => setIsOverlayCOn(false)}></div>
            <div className="dashboardLeft">
                 
@@ -750,7 +821,7 @@ const UserDashboard = () => {
                    {renderProfileSideBar()}
                     
                 </ul>
-                <div>
+                <div className="flexDiv">
                 <button className="dashBtns dashMenuBtn">
                 <div className="dashBtnImg" style={{
                     backgroundImage:`url(${burgerIcon})`
