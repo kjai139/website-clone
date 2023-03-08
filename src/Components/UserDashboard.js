@@ -20,6 +20,7 @@ import { useEffect, useState } from "react"
 import { fireStore, firebaseAuth, storage } from "../firebase"
 import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
+import { openai } from "../openai"
 
 const UserDashboard = () => {
 
@@ -177,6 +178,13 @@ const UserDashboard = () => {
     const [isOverlayOn, setIsOverlayOn] = useState(false)
     const [isCreateOn, setIsCreateOn] = useState(false)
 
+    const [isAiResultsOut, setIsAiResultsOut] = useState(false)
+
+    const adjustScrollHeight = (e) => {
+        e.target.style.height = "";
+        e.target.style.height = e.target.scrollHeight + "px"
+    }
+
 
     const renderCreate = () => {
         
@@ -197,6 +205,25 @@ const UserDashboard = () => {
                     </label>
                     </div>
                 </form>
+                <div className="ai-upload-header">
+                    <p>Or ask the AI to generate an image</p>
+                    <p>Example:"Get me an image of a red panda"</p>
+                </div>
+                <form id="ai-form">
+                <div className="ai-prompt-div">
+                <textarea name="ai-prompt-msg" autoComplete="off" onInput={adjustScrollHeight} maxLength="50" placeholder="Enter text here..."></textarea>
+                <button onClick={onAiPrompt}>Enter</button>
+                </div>
+                </form>
+                <div className="ai-Results-msg">
+                    {isAiResultsOut ? 'Right-click and save the images you like or ask the AI again' : null}
+                </div>
+                <div className={`aiResults-div ${isAiResultsOut ? null : 'hidden'}`}>
+                    <img className="ai-imgs" src={AiResult1} alt="result1"></img>
+                    <img className="ai-imgs" src={AiResult2} alt="result2"></img>
+                    <img className="ai-imgs" src={AiResult3} alt="result3"></img>
+
+                </div>
 
             </div>
 
@@ -244,8 +271,9 @@ const UserDashboard = () => {
                                 {postDetails.name}
                             </div>
                         </div>
+                        <div className="post-cmts-cont">
                         {renderPostCmts()}
-
+                        </div>
                         <div className="post-d-div">
                         <div className={`dpost-overlay ${isDCmtLoading ? null : 'hidden'}`}>
                         </div>
@@ -353,6 +381,12 @@ const UserDashboard = () => {
         
     }
 
+    // const getAiModels = async () => {
+    //     const response = await openai.listModels()
+
+    //     console.log(response)
+    // }
+
     const renderCreateShare = () => {
         return (
             <div className="createFormDiv">
@@ -384,6 +418,7 @@ const UserDashboard = () => {
                         <div className="WcDiv">
                             <div className="wordCounter">{txtAreaWC}/2200</div>
                         </div>
+                        
                     </div>
                 </div>
             </div>
@@ -436,6 +471,10 @@ const UserDashboard = () => {
         setIsImgUploaded(false)
         setisPostMorePopOn(false)
         setTxtAreaWC(0)
+        setAiResult1(null)
+        setAiResult2(null)
+        setAiResult3(null)
+        setIsAiResultsOut(false)
         
         setIsLoading(false)
         setIsPostCreated(false)
@@ -463,10 +502,85 @@ const UserDashboard = () => {
             setUploadedImg([reader.result])
             setIsImgUploaded(true)
             setImgFile(file)
+           
             setupLoadedFileName(file.name)
-            // console.log(file, [reader.result])
+            console.log(file, [reader.result])
         }
         
+    }
+
+    const [AiResult1 , setAiResult1] = useState()
+    const [AiResult2, setAiResult2] = useState()
+    const [AiResult3, setAiResult3] = useState()
+
+    const [isAiFetching, setisAiFetching] = useState(false)
+   
+
+    const onAiPrompt = async (e) => {
+        e.preventDefault()
+
+        let form = e.target.parentNode.parentNode
+
+        let formData = new FormData(form)
+
+        let promptMsg = formData.get('ai-prompt-msg')
+        
+
+        console.log(promptMsg)
+        form.reset()
+        setisAiFetching(true)
+        const response = await openai.createImage({
+            "prompt": promptMsg,
+            "n":3,
+            "size": "512x512",
+            "response_format": "url"
+        })
+        setisAiFetching(false)
+        setIsAiResultsOut(true)
+        console.log(response)
+
+        setAiResult1(response.data.data[0].url)
+        setAiResult2(response.data.data[1].url)
+        setAiResult3(response.data.data[2].url)
+
+
+        //CORS ERROR TRYING TO TURN URL TO FILE
+
+        // let fetchR = await fetch(response.data.data[0].url)
+        // let data = await fetchR.blob()
+        // let metadata = {
+        //     type: 'image/jpeg'
+        // }
+        // let filename = (Math.random() + 1).toString(36).substring(8)
+        // let file = new File([data], `aimg${filename}.jpg`, metadata)
+
+        // let reader = new FileReader()
+
+        // let fileUrl = reader.readAsDataURL(file)
+        // // console.log(fileUrl, [reader.result])
+        // reader.onloadend = () => {
+        //     setUploadedImg([reader.result])
+        //     setIsImgUploaded(true)
+        //     setImgFile(file)
+           
+        //     setupLoadedFileName(file.name)
+        //     console.log(file, [reader.result])
+        // }
+
+        //CORS ERROR END--
+
+
+
+
+
+
+        // setUploadedImg(response.data.data[0].url)
+        // setIsImgUploaded(true)
+
+
+
+
+
     }
 
     const [userData, setUserData] = useState([])
@@ -809,7 +923,15 @@ const UserDashboard = () => {
             {isPostDetailsOpen ? renderPostDetails() : null}
             {isPostMorePopOn && isPostByUser ? renderDeletePostMenu() : null}
             {isPostMorePopOn && !isPostByUser ? renderReportPostMenu() : null}
+
+        <div className={`overlay-top ${isAiFetching ? undefined : 'hidden'}`} style={{
+            backgroundImage: `url(${spinGif})`
+        }}>
+
+        </div>
+        
         <div className={`overlay ${isOverlayOn || isPostDetailsOpen || isPostMorePopOn ? undefined : 'hidden'}`} onClick={checkIfConfirm}></div>
+
         <div className={`overlay-cancel ${isOverlayCOn ? undefined : 'hidden'}`} onClick={ () => setIsOverlayCOn(false)}></div>
            <div className="dashboardLeft">
                 

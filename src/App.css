@@ -70,6 +70,17 @@ body {
   background-color: var(--overlay);
 }
 
+.overlay-top {
+  background-position: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-repeat: no-repeat;
+  z-index: 9999;
+  background-color: var(--overlay);
+}
+
 .commentOverlay {
   position: absolute;
   top:0;
@@ -316,7 +327,84 @@ input[type=file] {
   border: 2px solid var(--borderColor);
 }
 
-#img-form, #loading-div {
+.ai-imgs {
+  max-width: 160px;
+  max-height: 160px;
+  object-fit: contain;
+}
+
+.ai-upload-header {
+  flex-direction: column;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ai-upload-header > p {
+  display: flex;
+  justify-content: center;
+  
+}
+
+.ai-upload-header > p:nth-child(2) {
+  color: var(--placeHolderTxt);
+  font-size: 14px;
+}
+
+.ai-prompt-div {
+  justify-content: center;
+  display: flex;
+  margin: 30px 30px 10px 30px;
+  gap: 5px;
+}
+
+.ai-Results-msg {
+  justify-content: center;
+  display: flex;
+  font-size: 14px;
+  color: var(--placeHolderTxt);
+  padding: 10px;
+}
+
+.ai-prompt-div > textarea {
+  border: 2px solid var(--placeHolderTxt);
+  border-radius: 8px;
+  font-size: 14px;
+  padding: 5px;
+  resize: none;
+  overflow: hidden;
+  
+}
+
+.ai-prompt-div > textarea:focus {
+  outline: none;
+}
+
+.ai-prompt-div > button {
+  color: white;
+  background-color: var(--btnBlue);
+  padding: 10px;
+  border-radius: 8px;
+  border: 0;
+}
+
+.ai-prompt-div > button:hover {
+  cursor: pointer;
+}
+
+.aiResults-div {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: rgb(0 0 0 / 24%) 0px 3px 8px;
+  padding: 10px;
+}
+
+#img-form {
+  padding: 20px 200px 20px 200px;
+}
+
+#loading-div {
   padding: 200px;
 }
 
@@ -723,6 +811,10 @@ label:hover {
   border-radius: 5px;
 }
 
+.postDetailInner {
+  max-height: 600px;
+}
+
 .postDRight, .postDLeft, .postDetailInner {
   display: flex;
   flex: 1;
@@ -794,14 +886,26 @@ label:hover {
   padding-right: 5px;
 }
 
+.post-cmts-cont {
+  display: block;
+  max-width: 35ch;
+  word-break: break-all;
+  overflow: overlay;
+  min-width: 30ch;
+}
+
+.post-cmts-cont::-webkit-scrollbar {
+  display:none;
+}
+
 .post-d-Comments {
   font-size: 12px;
   font-family: var(--cmtFont);
-  flex: 1;
-  word-wrap: break-word;
+  flex: 1 1;
   padding-right: 10px;
   max-width: 70ch;
   font-weight: 300;
+  word-break: break-word;
 }
 
 .post-d-img {
@@ -813,7 +917,7 @@ label:hover {
 
 .post-d-div {
   margin-top: auto;
-  padding: 10px;
+  padding: 20px 10px 20px 10px;
   position: relative;
 }
 
@@ -903,6 +1007,7 @@ label:hover {
 
   .postDetailInner {
     flex-direction: column;
+    
   }
   
   #img-form {
