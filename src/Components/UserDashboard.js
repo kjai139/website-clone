@@ -17,10 +17,11 @@ import postMoreIcon from "./Assets/images/dashboard-icons/more-post.svg"
 
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { fireStore, firebaseAuth, storage, functions } from "../firebase"
+import { fireStore, firebaseAuth, storage} from "../firebase"
 import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
-import { openai } from "../openai"
+
+
 import { httpsCallable, getFunctions } from "firebase/functions"
 
 
@@ -40,6 +41,10 @@ const UserDashboard = () => {
     const [userName, setUserName] = useState()
 
    const auth = getAuth()
+
+   const functions = getFunctions()
+    
+   const createImage = httpsCallable(functions, 'createImage')
   
    
     
@@ -387,11 +392,7 @@ const UserDashboard = () => {
         
     }
 
-    // const getAiModels = async () => {
-    //     const response = await openai.listModels()
-
-    //     console.log(response)
-    // }
+    
 
     const renderCreateShare = () => {
         return (
@@ -537,38 +538,22 @@ const UserDashboard = () => {
         setisAiFetching(true)
 
         
-        const functions = getFunctions()
-    
-       const createImage = httpsCallable(functions, 'createImage')
+
        
 
-       createImage({
-        prompt: `${promptMsg}`
-       }).then( result => {
-        console.log(result.data)
-       }).catch(error => {
-        console.error(error)
-       })
+       createImage({ prompt: promptMsg})
+        .then( (result) => {
+            console.log(result)
+        }).catch((error) => {
+            const code = error.code
+            const message = error.message
+            const details = error.details
+
+            console.log(code, message, details)
+        })
 
     
-        // try {
-        //     const response = await (await fetch('https://api.openai.com/v1/images/generations', {
-        //     prompt:promptMsg,
-        //     n:3,
-        //     size:'512x512'
-        // }, {
-        //     headers: {
-        //         'User-Agent': 'MyApp/1.0.0'
-        //     },
-        //     auth: {
-        //         username:"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",
-        //         password: ''
-        //     }
-        // })).json()
-
-        // let image1 = response.data.data[0].url
-        // let image2 = response.data.data[1].url
-        // let image3 = response.data.data[2].url
+       
         
 
         setisAiFetching(false)
