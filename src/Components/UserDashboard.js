@@ -529,12 +529,16 @@ const UserDashboard = () => {
         console.log(promptMsg)
         form.reset()
         setisAiFetching(true)
+        
         const response = await openai.createImage({
-            "prompt": promptMsg,
-            "n":3,
-            "size": "512x512",
-            "response_format": "url"
+            prompt: promptMsg,
+            n:3,
+            size: '512x512'
         })
+
+        let image1 = response.data.data[0].url
+        let image2 = response.data.data[1].url
+        let image3 = response.data.data[2].url
 
         // const requestOptions = {
         //     method: 'POST',
@@ -557,9 +561,9 @@ const UserDashboard = () => {
         setIsAiResultsOut(true)
         console.log(response)
 
-        setAiResult1(response.data.data[0].url)
-        setAiResult2(response.data.data[1].url)
-        setAiResult3(response.data.data[2].url)
+        setAiResult1(image1)
+        setAiResult2(image2)
+        setAiResult3(image3)
 
 
         //CORS ERROR TRYING TO TURN URL TO FILE
