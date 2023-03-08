@@ -530,31 +530,33 @@ const UserDashboard = () => {
         form.reset()
         setisAiFetching(true)
         
-        const response = await openai.createImage({
-            prompt: promptMsg,
-            n:3,
-            size: '512x512'
-        })
+        // const response = await openai.createImage({
+        //     prompt: promptMsg,
+        //     n:3,
+        //     size: '512x512'
+        // })
+
+        
+
+        const requestOptions = {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization':"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"
+            },
+            body: JSON.stringify({
+                "prompt": promptMsg,
+                "n":3,
+                "size": "512x512",
+                "response_format": "url"
+            })
+        };
+
+        const response = await (await fetch('https://api.openai.com/v1/images/generations', requestOptions)).json()
 
         let image1 = response.data.data[0].url
         let image2 = response.data.data[1].url
         let image3 = response.data.data[2].url
-
-        // const requestOptions = {
-        //     method: 'POST',
-        //     headers: {
-        //       'Content-Type': 'application/json',
-        //       'Authorization':'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'
-        //     },
-        //     body: JSON.stringify({
-        //         "prompt": promptMsg,
-        //         "n":3,
-        //         "size": "512x512",
-        //         "response_format": "url"
-        //     })
-        // };
-
-        // const response = await (await fetch('https://api.openai.com/v1/images/generations', requestOptions)).json()
         
 
         setisAiFetching(false)
