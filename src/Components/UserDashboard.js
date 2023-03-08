@@ -549,7 +549,7 @@ const UserDashboard = () => {
                 'User-Agent': 'MyApp/1.0.0'
             },
             auth: {
-                username:"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",
+                username:"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",
                 password: ''
             }
         })).json()
@@ -566,7 +566,7 @@ const UserDashboard = () => {
         setAiResult1(image1)
         setAiResult2(image2)
         setAiResult3(image3)
-        
+
         } catch (err) {
             console.error(err)
         }
