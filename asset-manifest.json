@@ -1,0 +1,29 @@
+{
+  "files": {
+    "main.css": "/website-clone/static/css/main.2eb42437.css",
+    "main.js": "/website-clone/static/js/main.1657ec1c.js",
+    "static/js/787.6b885e48.chunk.js": "/website-clone/static/js/787.6b885e48.chunk.js",
+    "static/media/phone1.png": "/website-clone/static/media/phone1.d688ff1f110b88f3c0c9.png",
+    "static/media/phone2.png": "/website-clone/static/media/phone2.66d6eaaf896694188857.png",
+    "static/media/home-phones.png": "/website-clone/static/media/home-phones.f4b69b981c389b538d0e.png",
+    "static/media/check-mark-once.gif": "/website-clone/static/media/check-mark-once.bdeb72b8767510557ca6.gif",
+    "static/media/reels-icon.svg": "/website-clone/static/media/reels-icon.69c7e92d0b894db3cbc8d1cd334eb46c.svg",
+    "static/media/more-post.svg": "/website-clone/static/media/more-post.88c4313c2ce40c8f8b419394046f29b1.svg",
+    "static/media/messages-icon.svg": "/website-clone/static/media/messages-icon.225260b6e0484d5d1780f6b84758a479.svg",
+    "static/media/create-icon.svg": "/website-clone/static/media/create-icon.7414ad1a4830c60072e061670e4d8660.svg",
+    "static/media/drag-icon.svg": "/website-clone/static/media/drag-icon.982ee244d07f454c86b8e2b32ca1561b.svg",
+    "static/media/explore-icon.svg": "/website-clone/static/media/explore-icon.70fca13f9c97f1e144387f4968ddca51.svg",
+    "index.html": "/website-clone/index.html",
+    "static/media/noti-icon.svg": "/website-clone/static/media/noti-icon.b54d58b200458edec4783c5d63bb2203.svg",
+    "static/media/menu-burger.svg": "/website-clone/static/media/menu-burger.390b9556fdc744d00080b71bea9f9d28.svg",
+    "static/media/search-icon.svg": "/website-clone/static/media/search-icon.037a4c222004540dc507d85d8c300953.svg",
+    "static/media/home-icon.svg": "/website-clone/static/media/home-icon.bbba30b4b44c9053694d2589ac0f0d3c.svg",
+    "main.2eb42437.css.map": "/website-clone/static/css/main.2eb42437.css.map",
+    "main.1657ec1c.js.map": "/website-clone/static/js/main.1657ec1c.js.map",
+    "787.6b885e48.chunk.js.map": "/website-clone/static/js/787.6b885e48.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2eb42437.css",
+    "static/js/main.1657ec1c.js"
+  ]
+}
