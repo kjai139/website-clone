@@ -17,10 +17,14 @@ import postMoreIcon from "./Assets/images/dashboard-icons/more-post.svg"
 
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react"
-import { fireStore, firebaseAuth, storage } from "../firebase"
+import { fireStore, firebaseAuth, storage, functions } from "../firebase"
 import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
 import { openai } from "../openai"
+import { httpsCallable } from "firebase/functions"
+
+
+
 
 const UserDashboard = () => {
 
@@ -36,6 +40,7 @@ const UserDashboard = () => {
     const [userName, setUserName] = useState()
 
    const auth = getAuth()
+  
    
     
     useEffect( () => {
@@ -43,6 +48,7 @@ const UserDashboard = () => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 setUserName(user.displayName)
+               
             } else {
                 console.log('user is signed out')
                 navigate('/')
@@ -529,47 +535,56 @@ const UserDashboard = () => {
         console.log(promptMsg)
         form.reset()
         setisAiFetching(true)
+
+
         
         // const response = await openai.createImage({
         //     prompt: promptMsg,
         //     n:3,
         //     size: '512x512'
         // })
-
         
+       const generateDALLEImage = httpsCallable(functions, 'generateDALLEImage')
+       
+
+       generateDALLEImage({
+        prompt: `${promptMsg}`
+       }).then( result => {
+        console.log(result.data)
+       }).catch(error => {
+        console.error(error)
+       })
 
     
-        try {
-            const response = await (await fetch('https://api.openai.com/v1/images/generations', {
-            prompt:promptMsg,
-            n:3,
-            size:'512x512'
-        }, {
-            headers: {
-                'User-Agent': 'MyApp/1.0.0'
-            },
-            auth: {
-                username:"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",
-                password: ''
-            }
-        })).json()
+        // try {
+        //     const response = await (await fetch('https://api.openai.com/v1/images/generations', {
+        //     prompt:promptMsg,
+        //     n:3,
+        //     size:'512x512'
+        // }, {
+        //     headers: {
+        //         'User-Agent': 'MyApp/1.0.0'
+        //     },
+        //     auth: {
+        //         username:"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",
+        //         password: ''
+        //     }
+        // })).json()
 
-        let image1 = response.data.data[0].url
-        let image2 = response.data.data[1].url
-        let image3 = response.data.data[2].url
+        // let image1 = response.data.data[0].url
+        // let image2 = response.data.data[1].url
+        // let image3 = response.data.data[2].url
         
 
         setisAiFetching(false)
         setIsAiResultsOut(true)
-        console.log(response)
+        // console.log(response)
 
-        setAiResult1(image1)
-        setAiResult2(image2)
-        setAiResult3(image3)
+        // setAiResult1(image1)
+        // setAiResult2(image2)
+        // setAiResult3(image3)
 
-        } catch (err) {
-            console.error(err)
-        }
+        
         
 
         
