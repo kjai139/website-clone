@@ -1,30 +1,20 @@
 const functions = require("firebase-functions");
+const {Configuration, OpenAIApi} = require("openai");
+const configuration = new Configuration({
+  apiKey: "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",
+});
+const openai = new OpenAIApi(configuration);
 
-// // Create and deploy your first functions
-// // https://firebase.google.com/docs/functions/get-started
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
-const axios = require("axios");
-
-exports.generateDALLEImage = functions.https.onCall(async (data, context) => {
-  const prompt = data.prompt;
-  const apiKey = `${process.env.REACT_APP_OPEN_API}`;
-  const apiUrl = "https://api.openai.com/v1/images/generations";
-
-  const response = await axios.post(apiUrl, {
-    prompt: prompt,
+exports.createImage = functions.https.onCall( async (data, context) => {
+  const response = await openai.createImage({
+    prompt: data.prompt,
     n: 3,
     size: "512x512",
-  }, {
-    headers: {
-      "Content-Type": "application/json",
-      "Authorization": `Bearer ${apiKey}`,
-    },
   });
 
-  return response.data;
+
+  const imgUrls = response.data;
+  return imgUrls;
 });
+
 

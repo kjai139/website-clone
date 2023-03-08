@@ -21,7 +21,7 @@ import { fireStore, firebaseAuth, storage, functions } from "../firebase"
 import { addDoc, arrayUnion, collection, deleteDoc, doc, getDoc, getDocs, limit, orderBy, query, serverTimestamp, setDoc, updateDoc } from "firebase/firestore"
 import {getDownloadURL, ref, uploadBytesResumable} from "firebase/storage"
 import { openai } from "../openai"
-import { httpsCallable } from "firebase/functions"
+import { httpsCallable, getFunctions } from "firebase/functions"
 
 
 
@@ -536,18 +536,13 @@ const UserDashboard = () => {
         form.reset()
         setisAiFetching(true)
 
-
         
-        // const response = await openai.createImage({
-        //     prompt: promptMsg,
-        //     n:3,
-        //     size: '512x512'
-        // })
-        
-       const generateDALLEImage = httpsCallable(functions, 'generateDALLEImage')
+        const functions = getFunctions()
+    
+       const createImage = httpsCallable(functions, 'createImage')
        
 
-       generateDALLEImage({
+       createImage({
         prompt: `${promptMsg}`
        }).then( result => {
         console.log(result.data)
