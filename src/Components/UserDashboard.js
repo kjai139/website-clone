@@ -538,22 +538,21 @@ const UserDashboard = () => {
 
         
 
-        const requestOptions = {
-            method: 'POST',
+    
+        try {
+            const response = await (await fetch('https://api.openai.com/v1/images/generations', {
+            prompt:promptMsg,
+            n:3,
+            size:'512x512'
+        }, {
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization':"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",
-              'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
+                'User-Agent': 'MyApp/1.0.0'
             },
-            body: JSON.stringify({
-                "prompt": promptMsg,
-                "n":3,
-                "size": "512x512",
-                "response_format": "url"
-            })
-        };
-
-        const response = await (await fetch('https://api.openai.com/v1/images/generations', requestOptions)).json()
+            auth: {
+                username:"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",
+                password: ''
+            }
+        })).json()
 
         let image1 = response.data.data[0].url
         let image2 = response.data.data[1].url
@@ -567,6 +566,13 @@ const UserDashboard = () => {
         setAiResult1(image1)
         setAiResult2(image2)
         setAiResult3(image3)
+        
+        } catch (err) {
+            console.error(err)
+        }
+        
+
+        
 
 
         //CORS ERROR TRYING TO TURN URL TO FILE
