@@ -11,7 +11,7 @@ const axios = require("axios");
 
 exports.generateDALLEImage = functions.https.onCall(async (data, context) => {
   const prompt = data.prompt;
-  const apiKey = "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";
+  const apiKey = `${process.env.REACT_APP_OPEN_API}`;
   const apiUrl = "https://api.openai.com/v1/images/generations";
 
   const response = await axios.post(apiUrl, {
