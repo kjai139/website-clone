@@ -558,15 +558,11 @@ const UserDashboard = () => {
             setisAiFetching(false)
             setIsAiResultsOut(true)
         }).catch((error) => {
-            const code = error.code
-            const message = error.message
-            const details = error.details
-
-            console.log(code, message, details)
+            console.log(error, error.message)
             setisAiFetching(false)
             setIsAiResultsOut(true)
             setisResultError(true)
-            setResultErrorMsg(error)
+            setResultErrorMsg(error.message)
         })
 
     
