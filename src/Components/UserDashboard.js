@@ -541,9 +541,19 @@ const UserDashboard = () => {
 
        
 
-       createImage({ text: 'two big cats'})
+       createImage({ text: promptMsg})
         .then( (result) => {
-            console.log(result)
+            console.log('result back:', result)
+            console.log(result.data.data)
+            let image1 = result.data.data[0].url
+            let image2 = result.data.data[1].url
+            let image3 = result.data.data[2].url
+
+            setAiResult1(image1)
+            setAiResult2(image2)
+            setAiResult3(image3)
+            setisAiFetching(false)
+            setIsAiResultsOut(true)
         }).catch((error) => {
             const code = error.code
             const message = error.message
@@ -556,52 +566,8 @@ const UserDashboard = () => {
        
         
 
-        setisAiFetching(false)
-        setIsAiResultsOut(true)
-        // console.log(response)
+       
 
-        // setAiResult1(image1)
-        // setAiResult2(image2)
-        // setAiResult3(image3)
-
-        
-        
-
-        
-
-
-        //CORS ERROR TRYING TO TURN URL TO FILE
-
-        // let fetchR = await fetch(response.data.data[0].url)
-        // let data = await fetchR.blob()
-        // let metadata = {
-        //     type: 'image/jpeg'
-        // }
-        // let filename = (Math.random() + 1).toString(36).substring(8)
-        // let file = new File([data], `aimg${filename}.jpg`, metadata)
-
-        // let reader = new FileReader()
-
-        // let fileUrl = reader.readAsDataURL(file)
-        // // console.log(fileUrl, [reader.result])
-        // reader.onloadend = () => {
-        //     setUploadedImg([reader.result])
-        //     setIsImgUploaded(true)
-        //     setImgFile(file)
-           
-        //     setupLoadedFileName(file.name)
-        //     console.log(file, [reader.result])
-        // }
-
-        //CORS ERROR END--
-
-
-
-
-
-
-        // setUploadedImg(response.data.data[0].url)
-        // setIsImgUploaded(true)
 
 
 
