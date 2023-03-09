@@ -811,9 +811,7 @@ label:hover {
   border-radius: 5px;
 }
 
-.postDetailInner {
- 
-}
+
 
 .postDRight, .postDLeft, .postDetailInner {
   display: flex;
