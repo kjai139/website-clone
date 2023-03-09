@@ -44,7 +44,7 @@ const UserDashboard = () => {
 
    const functions = getFunctions()
     
-   const createImage = httpsCallable(functions, 'createImage')
+   const createImage = httpsCallable(functions, 'createImage');
   
    
     
@@ -541,7 +541,7 @@ const UserDashboard = () => {
 
        
 
-       createImage({ prompt: promptMsg})
+       createImage({ text: 'two big cats'})
         .then( (result) => {
             console.log(result)
         }).catch((error) => {
