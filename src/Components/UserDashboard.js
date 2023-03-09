@@ -227,7 +227,8 @@ const UserDashboard = () => {
                 </div>
                 </form>
                 <div className="ai-Results-msg">
-                    {isAiResultsOut ? 'Right-click and save the images you like or ask the AI again' : null}
+                    {isAiResultsOut && !isResultError ? 'Right-click and save the images you like or ask the AI again' : null}
+                    {isAiResultsOut && isResultError ? `${resultErrorMsg}` : null}
                 </div>
                 <div className={`aiResults-div ${isAiResultsOut ? null : 'hidden'}`}>
                     <img className="ai-imgs" src={AiResult1} alt="result1"></img>
@@ -482,6 +483,7 @@ const UserDashboard = () => {
         setAiResult2(null)
         setAiResult3(null)
         setIsAiResultsOut(false)
+        setisResultError(false)
         
         setIsLoading(false)
         setIsPostCreated(false)
@@ -521,7 +523,8 @@ const UserDashboard = () => {
     const [AiResult3, setAiResult3] = useState()
 
     const [isAiFetching, setisAiFetching] = useState(false)
-   
+    const [isResultError, setisResultError] = useState(false)
+    const [resultErrorMsg, setResultErrorMsg] = useState()
 
     const onAiPrompt = async (e) => {
         e.preventDefault()
@@ -560,6 +563,10 @@ const UserDashboard = () => {
             const details = error.details
 
             console.log(code, message, details)
+            setisAiFetching(false)
+            setIsAiResultsOut(true)
+            setisResultError(true)
+            setResultErrorMsg(error)
         })
 
     

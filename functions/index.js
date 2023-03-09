@@ -33,7 +33,6 @@ exports.createImage = functions.https.onCall(async (data, context) => {
       return imageURLS;
     });
   } catch (error) {
-    console.error(error);
-    throw new functions.https.HttpsError("internal error");
+    throw new functions.https.HttpsError("internal er", error, error.emssage);
   }
 });
